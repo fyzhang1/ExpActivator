@@ -1,0 +1,802 @@
+[
+  {
+    "user_id": 1,
+    "time": "20250310_220841",
+    "scenario": "运动场馆",
+    "app": "com.tencent.mm",
+    "originalInstruction": "打开微信，向置顶联系人发送信息：“我也练好回去啦”",
+    "intentClass": "社交"
+  },
+  {
+    "user_id": 6,
+    "time": "20250416_195947",
+    "scenario": "学校",
+    "app": "com.autonavi.minimap",
+    "originalInstruction": "打开高德地图查看到五道口距离",
+    "intentClass": "导航"
+  },
+  {
+    "user_id": 6,
+    "time": "20250421_214340",
+    "scenario": "餐饮场所",
+    "app": "com.sankuai.meituan",
+    "originalInstruction": "打开美团查看蔬菜水果",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 9,
+    "time": "20250424_235027",
+    "scenario": "学校",
+    "app": "com.android.launcher",
+    "originalInstruction": "使用网易云音乐听歌",
+    "intentClass": "音乐"
+  },
+  {
+    "user_id": 10,
+    "time": "20250413_100843",
+    "scenario": "住所",
+    "app": "com.taobao.idlefish",
+    "originalInstruction": "闲鱼-搜索比格比萨，查看价格优惠范围",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 10,
+    "time": "20250316_115839",
+    "scenario": "住所",
+    "app": "com.tencent.mm",
+    "originalInstruction": "微信-在“快乐一家人”群聊中回信息👍👍",
+    "intentClass": "社交"
+  },
+  {
+    "user_id": 13,
+    "time": "20250314_180113",
+    "scenario": "运动场馆",
+    "app": "tv.danmaku.bili",
+    "originalInstruction": "打开哔哩哔哩，搜索新手健身教程",
+    "intentClass": "视频"
+  },
+  {
+    "user_id": 13,
+    "time": "20250314_174857",
+    "scenario": "学校",
+    "app": "com.cmcc.cmvideo",
+    "originalInstruction": "打开咪咕视频，查看WTT最近的比赛",
+    "intentClass": "视频"
+  },
+  {
+    "user_id": 14,
+    "time": "20250429_130538",
+    "scenario": "住所",
+    "app": "com.xingin.xhs",
+    "originalInstruction": "打开小红书查看浏览记录",
+    "intentClass": "帖子"
+  },
+  {
+    "user_id": 14,
+    "time": "20250430_161116",
+    "scenario": "住所",
+    "app": "com.coloros.alarmclock",
+    "originalInstruction": "打开时钟设置下午17:30的闹钟",
+    "intentClass": "闹钟/计时"
+  },
+  {
+    "user_id": 18,
+    "time": "20250422_214332",
+    "scenario": "住所",
+    "app": "tv.danmaku.bili",
+    "originalInstruction": "打开b站，搜索donk",
+    "intentClass": "视频"
+  },
+  {
+    "user_id": 18,
+    "time": "20250320_154822",
+    "scenario": "学校",
+    "app": "com.zhihu.android",
+    "originalInstruction": "打开知乎，搜索热榜第一",
+    "intentClass": "帖子"
+  },
+  {
+    "user_id": 21,
+    "time": "20250408_231151",
+    "scenario": "住所",
+    "app": "com.tencent.mm",
+    "originalInstruction": "查看微信公众号“山东武警”最新文章",
+    "intentClass": "阅读"
+  },
+  {
+    "user_id": 21,
+    "time": "20250410_235632",
+    "scenario": "住所",
+    "app": "com.huawei.systemmanager",
+    "originalInstruction": "打开手机管家查看骚扰拦截",
+    "intentClass": "设备管理/维护"
+  },
+  {
+    "user_id": 22,
+    "time": "20250428_233211",
+    "scenario": "住所",
+    "app": "com.zhihu.android",
+    "originalInstruction": "打开知乎，浏览话题并查看回答",
+    "intentClass": "帖子"
+  },
+  {
+    "user_id": 23,
+    "time": "20250310_134144",
+    "scenario": "办公场所",
+    "app": "com.tencent.qqmusic",
+    "originalInstruction": "用qq音乐播放今日歌单的第一首歌，并设置为随机播放",
+    "intentClass": "音乐"
+  },
+  {
+    "user_id": 24,
+    "time": "20250402_161743",
+    "scenario": "学校",
+    "app": "com.miui.calculator",
+    "originalInstruction": "打开计算器，求解sin（log2）",
+    "intentClass": "计算"
+  },
+  {
+    "user_id": 24,
+    "time": "20250403_140616",
+    "scenario": "住所",
+    "app": "com.miui.weather2",
+    "originalInstruction": "打开天气，查看赣县区的近15日天气",
+    "intentClass": "天气"
+  },
+  {
+    "user_id": 27,
+    "time": "20250405_214559",
+    "scenario": "住所",
+    "app": "com.huawei.android.launcher",
+    "originalInstruction": "打开qq音乐，播放下一首歌曲",
+    "intentClass": "音乐"
+  },
+  {
+    "user_id": 28,
+    "time": "20250403_194501",
+    "scenario": "学校",
+    "app": "com.hihonor.android.launcher",
+    "originalInstruction": "打开deepseek，询问speed是谁",
+    "intentClass": "AI调用"
+  },
+  {
+    "user_id": 31,
+    "time": "20250418_182846",
+    "scenario": "住所",
+    "app": "com.miui.weather2",
+    "originalInstruction": "使用天气，查看北京，进入15日天气预报",
+    "intentClass": "天气"
+  },
+  {
+    "user_id": 31,
+    "time": "20250422_180916",
+    "scenario": "办公场所",
+    "app": "tv.danmaku.bili",
+    "originalInstruction": "使用哔哩哔哩，搜索俄罗斯钓鱼，查看第一个视频",
+    "intentClass": "视频"
+  },
+  {
+    "user_id": 32,
+    "time": "20250427_094429",
+    "scenario": "住所",
+    "app": "com.sankuai.meituan",
+    "originalInstruction": "打开美团，搜索霸王茶姬，点击第一个推荐，点击左栏新品尝鲜，点击“万象春和”右下角的选规格，点击半糖，加入购物车",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 34,
+    "time": "20250419_111804",
+    "scenario": "学校",
+    "app": "com.baidu.BaiduMap",
+    "originalInstruction": "打开百度地图查看北京市的人口热力图",
+    "intentClass": "景点与旅游"
+  },
+  {
+    "user_id": 34,
+    "time": "20250423_191047",
+    "scenario": "学校",
+    "app": "com.android.settings",
+    "originalInstruction": "在设置打开wifi连接tsinghuasecure",
+    "intentClass": "系统设置"
+  },
+  {
+    "user_id": 34,
+    "time": "20250427_190205",
+    "scenario": "住所",
+    "app": "com.whova.event",
+    "originalInstruction": "在whova查看www会议日程",
+    "intentClass": "会议"
+  },
+  {
+    "user_id": 37,
+    "time": "20250417_222638",
+    "scenario": "住所",
+    "app": "com.android.launcher",
+    "originalInstruction": "打开百度网盘，查看文件下载情况",
+    "intentClass": "文件与数据管理"
+  },
+  {
+    "user_id": 38,
+    "time": "20250429_154615",
+    "scenario": "文艺场馆",
+    "app": "com.xingin.xhs",
+    "originalInstruction": "打开小红书，搜索隆福寺，浏览查看推荐帖子",
+    "intentClass": "帖子"
+  },
+  {
+    "user_id": 39,
+    "time": "20250409_231011",
+    "scenario": "住所",
+    "app": "com.douban.frodo",
+    "originalInstruction": "打开豆瓣搜索谭薇",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 39,
+    "time": "20250410_230129",
+    "scenario": "住所",
+    "app": "com.huawei.calculator",
+    "originalInstruction": "打开计算器计算17乘以85915",
+    "intentClass": "计算"
+  },
+  {
+    "user_id": 40,
+    "time": "20250408_204107",
+    "scenario": "学校",
+    "app": "com.taobao.taobao",
+    "originalInstruction": "打开淘宝，搜索钩织毯子成品，点击第一条商品",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 40,
+    "time": "20250409_200829",
+    "scenario": "学校",
+    "app": "com.taobao.taobao",
+    "originalInstruction": "打开淘宝，搜索水杨酸棉片，点击第一条商品",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 40,
+    "time": "20250411_090610",
+    "scenario": "住所",
+    "app": "com.xingin.xhs",
+    "originalInstruction": "打开小红书，搜索牛仔裤裤腰改小，点击第一条笔记",
+    "intentClass": "帖子"
+  },
+  {
+    "user_id": 41,
+    "time": "20250425_021014",
+    "scenario": "住所",
+    "app": "com.bbk.launcher2",
+    "originalInstruction": "卸载哈喽app",
+    "intentClass": "应用管理/设置/下载/卸载"
+  },
+  {
+    "user_id": 41,
+    "time": "20250428_201057",
+    "scenario": "学校",
+    "app": "com.bbk.launcher2",
+    "originalInstruction": "打开天气app，查看明天海淀区天气",
+    "intentClass": "天气"
+  },
+  {
+    "user_id": 42,
+    "time": "20250410_201236",
+    "scenario": "住所",
+    "app": "tv.danmaku.bili",
+    "originalInstruction": "打开b站观看lpl第二赛段赛事直播",
+    "intentClass": "视频"
+  },
+  {
+    "user_id": 42,
+    "time": "20250410_230833",
+    "scenario": "住所",
+    "app": "com.xingin.xhs",
+    "originalInstruction": "打开小红书搜索“深圳nip主场”并浏览",
+    "intentClass": "帖子"
+  },
+  {
+    "user_id": 42,
+    "time": "20250413_224425",
+    "scenario": "住所",
+    "app": "com.taobao.taobao",
+    "originalInstruction": "打开淘宝查看购买商品发货情况",
+    "intentClass": "快递物流"
+  },
+  {
+    "user_id": 42,
+    "time": "20250415_214545",
+    "scenario": "住所",
+    "app": "com.autonavi.minimap",
+    "originalInstruction": "打开高德地图搜索海淀区政务服务中心并查看路线",
+    "intentClass": "导航"
+  },
+  {
+    "user_id": 44,
+    "time": "20250421_173753",
+    "scenario": "商场",
+    "app": "com.miui.home",
+    "originalInstruction": "打开天猫校园，授权登录。",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 47,
+    "time": "20250422_215318",
+    "scenario": "学校",
+    "app": "com.huawei.android.launcher",
+    "originalInstruction": "播放录音机app的第七条录音。",
+    "intentClass": "音乐"
+  },
+  {
+    "user_id": 47,
+    "time": "20250423_184625",
+    "scenario": "餐饮场所",
+    "app": "tv.danmaku.bili",
+    "originalInstruction": "打开哔哩哔哩app搜索“上野中下辅都尽力了”并播放搜索结果的第一个视频。",
+    "intentClass": "视频"
+  },
+  {
+    "user_id": 47,
+    "time": "20250424_175304",
+    "scenario": "餐饮场所",
+    "app": "com.huawei.android.launcher",
+    "originalInstruction": "打开哔哩哔哩app播放首页推荐页面的第一条视频。",
+    "intentClass": "视频"
+  },
+  {
+    "user_id": 47,
+    "time": "20250425_161209",
+    "scenario": "娱乐休闲场所",
+    "app": "com.gotokeep.keep",
+    "originalInstruction": "打开Keep app搜索“世界之外”，进入活动页面点击报名。",
+    "intentClass": "应用管理/设置/下载/卸载"
+  },
+  {
+    "user_id": 47,
+    "time": "20250427_150438",
+    "scenario": "住所",
+    "app": "com.taobao.taobao",
+    "originalInstruction": "打开淘宝app查看我的订单，在第二个订单处确定收货。",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 47,
+    "time": "20250429_175026",
+    "scenario": "住所",
+    "app": "com.baidu.BaiduMap",
+    "originalInstruction": "打开百度地图app搜索“工商银行”，查看距离当前位置最近的地点及路线。",
+    "intentClass": "导航"
+  },
+  {
+    "user_id": 51,
+    "time": "20250423_174559",
+    "scenario": "学校",
+    "app": "com.huawei.android.totemweather",
+    "originalInstruction": "打开天气查看阿布扎比明日天气",
+    "intentClass": "天气"
+  },
+  {
+    "user_id": 51,
+    "time": "20250424_195939",
+    "scenario": "学校",
+    "app": "com.jingdong.app.mall",
+    "originalInstruction": "打开京东搜索macairA3113充电器",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 52,
+    "time": "20250417_222821",
+    "scenario": "住所",
+    "app": "com.huawei.browser",
+    "originalInstruction": "打开浏览器搜索手指止血方法",
+    "intentClass": "信息查询"
+  },
+  {
+    "user_id": 54,
+    "time": "20250310_191227",
+    "scenario": "学校",
+    "app": "com.shizhuang.duapp",
+    "originalInstruction": "打开得物搜索牛仔裤并将销量最高的商品加入购物车",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 55,
+    "time": "20250406_155431",
+    "scenario": "交通工具",
+    "app": "com.hihonor.android.launcher",
+    "originalInstruction": "打开小红书，点击右下角消息图标查看新消息",
+    "intentClass": "社交"
+  },
+  {
+    "user_id": 56,
+    "time": "20250423_105625",
+    "scenario": "娱乐休闲场所",
+    "app": "com.android.launcher",
+    "originalInstruction": "打开起点读书，完成签到",
+    "intentClass": "签到/做任务/打卡"
+  },
+  {
+    "user_id": 56,
+    "time": "20250423_165431",
+    "scenario": "餐饮场所",
+    "app": "com.lucky.luckyclient",
+    "originalInstruction": "打开瑞幸咖啡，浏览商品，若存在生椰拿铁则加入购物车一杯",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 56,
+    "time": "20250426_174311",
+    "scenario": "城市街道",
+    "app": "com.autonavi.minimap",
+    "originalInstruction": "在高德地图上导航最近的一家蓝蛙",
+    "intentClass": "导航"
+  },
+  {
+    "user_id": 56,
+    "time": "20250429_170605",
+    "scenario": "餐饮场所",
+    "app": "com.lucky.luckyclient",
+    "originalInstruction": "打开瑞幸咖啡，查看当前拥有的优惠劵",
+    "intentClass": "点餐/外卖"
+  },
+  {
+    "user_id": 57,
+    "time": "20250426_152108",
+    "scenario": "住所",
+    "app": "com.xingin.xhs",
+    "originalInstruction": "在小红书搜索蒙德每日委托成就",
+    "intentClass": "帖子"
+  },
+  {
+    "user_id": 57,
+    "time": "20250426_200444",
+    "scenario": "住所",
+    "app": "com.tencent.qqmusic",
+    "originalInstruction": "在QQ音乐搜索如果我说我真的爱你，播放搜索结果第一条",
+    "intentClass": "音乐"
+  },
+  {
+    "user_id": 57,
+    "time": "20250430_145904",
+    "scenario": "住所",
+    "app": "com.huawei.android.launcher",
+    "originalInstruction": "在QQ音乐把正在播放的歌曲加入歌单5.1",
+    "intentClass": "音乐"
+  },
+  {
+    "user_id": 59,
+    "time": "20250404_160131",
+    "scenario": "住所",
+    "app": "com.xingin.xhs",
+    "originalInstruction": "在小红书中点击左上角菜单键，进入设置，在储存空间中清理缓存",
+    "intentClass": "应用管理/设置/下载/卸载"
+  },
+  {
+    "user_id": 59,
+    "time": "20250405_133721",
+    "scenario": "住所",
+    "app": "com.jingdong.app.mall",
+    "originalInstruction": "在京东进入“秒送”板块，点击进入“特价团购”",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 59,
+    "time": "20250408_151700",
+    "scenario": "住所",
+    "app": "tv.acfundanmaku.video",
+    "originalInstruction": "在AcFun中点击进入“发现”，查看“话题”板块”",
+    "intentClass": "视频"
+  },
+  {
+    "user_id": 59,
+    "time": "20250408_214619",
+    "scenario": "住所",
+    "app": "com.taobao.idlefish",
+    "originalInstruction": "在闲鱼点击进入“我的”，点击“我发布的”，查看“已下架”",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 61,
+    "time": "20250412_185736",
+    "scenario": "住所",
+    "app": "com.taobao.taobao",
+    "originalInstruction": "打开淘宝，搜索酱多多，并点击搜索后的第一家店铺",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 61,
+    "time": "20250412_201216",
+    "scenario": "住所",
+    "app": "tv.danmaku.bili",
+    "originalInstruction": "打开bilibili，搜索地方传奇，并点开搜索后的第一条视频",
+    "intentClass": "视频"
+  },
+  {
+    "user_id": 61,
+    "time": "20250416_182029",
+    "scenario": "住所",
+    "app": "com.tencent.mobileqq",
+    "originalInstruction": "打开QQ选择消息列表里第一个置顶的好友并发送相册里的第一张图片",
+    "intentClass": "社交"
+  },
+  {
+    "user_id": 61,
+    "time": "20250416_192947",
+    "scenario": "住所",
+    "app": "com.android.launcher",
+    "originalInstruction": "打开bangumi mx，在进度管理中找到“药屋少女的呢喃2”并标记ep38已看",
+    "intentClass": "阅读"
+  },
+  {
+    "user_id": 63,
+    "time": "20250424_161009",
+    "scenario": "学校",
+    "app": "me.ele",
+    "originalInstruction": "打开饿了么，搜索附近奶茶",
+    "intentClass": "点餐/外卖"
+  },
+  {
+    "user_id": 64,
+    "time": "20250425_173828",
+    "scenario": "住所",
+    "app": "com.sankuai.meituan",
+    "originalInstruction": "打开美团搜索卸妆水并查看第一条结果",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 65,
+    "time": "20250424_164237",
+    "scenario": "住所",
+    "app": "com.kugou.android.lite",
+    "originalInstruction": "打开酷狗音乐概念版，播放我记得",
+    "intentClass": "音乐"
+  },
+  {
+    "user_id": 65,
+    "time": "20250426_085738",
+    "scenario": "住所",
+    "app": "tv.danmaku.bili",
+    "originalInstruction": "打开哔哩哔哩，播放周杰伦歌曲你好吗现场版",
+    "intentClass": "视频"
+  },
+  {
+    "user_id": 65,
+    "time": "20250426_100916",
+    "scenario": "餐饮场所",
+    "app": "com.kugou.android.lite",
+    "originalInstruction": "打开酷狗音乐概念版，播放周杰伦的你好吗。",
+    "intentClass": "音乐"
+  },
+  {
+    "user_id": 65,
+    "time": "20250427_121116",
+    "scenario": "餐饮场所",
+    "app": "tv.danmaku.bili",
+    "originalInstruction": "打开哔哩哔哩，播放黄鹤楼相声",
+    "intentClass": "视频"
+  },
+  {
+    "user_id": 65,
+    "time": "20250428_123523",
+    "scenario": "住所",
+    "app": "tv.danmaku.bili",
+    "originalInstruction": "打开哔哩哔哩，播放小王albert的最新视频。",
+    "intentClass": "视频"
+  },
+  {
+    "user_id": 70,
+    "time": "20250406_182908",
+    "scenario": "交通工具",
+    "app": "tv.danmaku.bili",
+    "originalInstruction": "打开bilibili观看kpl春季赛官方直播间直播",
+    "intentClass": "视频"
+  },
+  {
+    "user_id": 71,
+    "time": "20250418_082827",
+    "scenario": "住所",
+    "app": "com.taptap",
+    "originalInstruction": "打开taptap，领取无限升级的每日签到兑换码",
+    "intentClass": "签到/做任务/打卡"
+  },
+  {
+    "user_id": 72,
+    "time": "20250421_164659",
+    "scenario": "住所",
+    "app": "com.miui.home",
+    "originalInstruction": "打开时钟设置一个30分钟倒计时",
+    "intentClass": "闹钟/计时"
+  },
+  {
+    "user_id": 72,
+    "time": "20250423_134539",
+    "scenario": "交通工具",
+    "app": "com.zhihu.android",
+    "originalInstruction": "打开知乎搜索余额宝和零钱通收益，进行比较",
+    "intentClass": "阅读"
+  },
+  {
+    "user_id": 77,
+    "time": "20250415_182339",
+    "scenario": "住所",
+    "app": "com.tencent.qqlive",
+    "originalInstruction": "打开腾讯视频搜索电影红海行动推荐",
+    "intentClass": "视频"
+  },
+  {
+    "user_id": 77,
+    "time": "20250415_183510",
+    "scenario": "办公场所",
+    "app": "com.sankuai.meituan",
+    "originalInstruction": "打开美团我的待评价完成秦皇岛野生动物园评价",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 77,
+    "time": "20250418_160817",
+    "scenario": "住所",
+    "app": "com.huawei.himovie",
+    "originalInstruction": "打开华为视频搜索电影中国机长收藏",
+    "intentClass": "视频"
+  },
+  {
+    "user_id": 77,
+    "time": "20250419_145126",
+    "scenario": "住所",
+    "app": "com.jingdong.app.mall",
+    "originalInstruction": "打开京东我的待评价完成南孚电池评价",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 79,
+    "time": "20250418_154158",
+    "scenario": "住所",
+    "app": "com.jingdong.app.mall",
+    "originalInstruction": "京东搜索牙齿脱敏素加入购物车",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 79,
+    "time": "20250418_155315",
+    "scenario": "住所",
+    "app": "com.taobao.taobao",
+    "originalInstruction": "打开淘宝搜索宝宝纯棉睡衣加入购物车",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 79,
+    "time": "20250422_205016",
+    "scenario": "住所",
+    "app": "com.autonavi.minimap",
+    "originalInstruction": "打开高德地图搜索园博园动物园",
+    "intentClass": "景点与旅游"
+  },
+  {
+    "user_id": 79,
+    "time": "20250424_192708",
+    "scenario": "住所",
+    "app": "com.taobao.taobao",
+    "originalInstruction": "打开淘宝搜索男士半袖第一个加入购物车",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 80,
+    "time": "20250416_151150",
+    "scenario": "办公场所",
+    "app": "com.moonshot.kimichat",
+    "originalInstruction": "用kimi搜索 “这样想象真有趣教学设计”，分享到文件传输助手",
+    "intentClass": "分享"
+  },
+  {
+    "user_id": 80,
+    "time": "20250409_080053",
+    "scenario": "办公场所",
+    "app": "com.achievo.vipshop",
+    "originalInstruction": "用唯品会搜索女士背包，筛选出评价高的加入购物车",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 83,
+    "time": "20250423_205311",
+    "scenario": "住所",
+    "app": "com.coloros.alarmclock",
+    "originalInstruction": "打开闹铃设置明天10点闹钟",
+    "intentClass": "闹钟/计时"
+  },
+  {
+    "user_id": 86,
+    "time": "20250401_211906",
+    "scenario": "住所",
+    "app": "com.quark.browser",
+    "originalInstruction": "打开夸克APP，搜索《家里家外》短视频",
+    "intentClass": "视频"
+  },
+  {
+    "user_id": 88,
+    "time": "20250407_141702",
+    "scenario": "办公场所",
+    "app": "com.xunmeng.pinduoduo",
+    "originalInstruction": "打开拼多多搜索3-6岁玩具",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 88,
+    "time": "20250411_223812",
+    "scenario": "住所",
+    "app": "com.taobao.idlefish",
+    "originalInstruction": "打开闲鱼查看订单信息",
+    "intentClass": "商品搜索与购物"
+  },
+  {
+    "user_id": 89,
+    "time": "20250403_193551",
+    "scenario": "住所",
+    "app": "com.android.launcher",
+    "originalInstruction": "打开浙政钉，阅读未读公告",
+    "intentClass": "阅读"
+  },
+  {
+    "user_id": 91,
+    "time": "20250422_210548",
+    "scenario": "住所",
+    "app": "com.tencent.mm",
+    "originalInstruction": "打开微信，向朋友发送消息",
+    "intentClass": "社交"
+  },
+  {
+    "user_id": 93,
+    "time": "20250418_092817",
+    "scenario": "城市街道",
+    "app": "com.greenpoint.android.mc10086.activity",
+    "originalInstruction": "到中国移动签到",
+    "intentClass": "签到/做任务/打卡"
+  },
+  {
+    "user_id": 93,
+    "time": "20250418_095149",
+    "scenario": "运动场馆",
+    "app": "tv.danmaku.bili",
+    "originalInstruction": "到哔哩哔哩搜索训练腹肌动作",
+    "intentClass": "视频"
+  },
+  {
+    "user_id": 93,
+    "time": "20250420_083334",
+    "scenario": "文艺场馆",
+    "app": "com.tencent.weread",
+    "originalInstruction": "到微信读书搜索城南旧事",
+    "intentClass": "阅读"
+  },
+  {
+    "user_id": 94,
+    "time": "20250413_114809",
+    "scenario": "住所",
+    "app": "com.baidu.searchbox",
+    "originalInstruction": "打开百度查迤字",
+    "intentClass": "信息查询"
+  },
+  {
+    "user_id": 94,
+    "time": "20250415_122559",
+    "scenario": "住所",
+    "app": "com.ximalaya.ting.android",
+    "originalInstruction": "打开喜马拉雅播放蒙曼女皇武则天",
+    "intentClass": "音乐"
+  },
+  {
+    "user_id": 94,
+    "time": "20250416_121445",
+    "scenario": "自然户外",
+    "app": "com.baidu.searchbox",
+    "originalInstruction": "打开百度搜郑州名称的由来",
+    "intentClass": "信息查询"
+  },
+  {
+    "user_id": 100,
+    "time": "20250409_203000",
+    "scenario": "住所",
+    "app": "me.ele",
+    "originalInstruction": "打开饿了么，搜索粥皇港式茶餐厅",
+    "intentClass": "点餐/外卖"
+  }
+]

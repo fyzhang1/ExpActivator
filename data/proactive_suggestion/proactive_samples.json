@@ -1,0 +1,1722 @@
+[
+    {
+        "user_id": 3,
+        "time": "20250414_234719",
+        "scenario": "住所",
+        "app": "com.tencent.mm",
+        "originalInstruction": "打开微信深圳大学城一卡通小程序，开启热水淋浴",
+        "intentClass": "应用管理/设置/下载/卸载"
+    },
+    {
+        "user_id": 3,
+        "time": "20250418_165715",
+        "scenario": "城市街道",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开美团扫描电单车开锁",
+        "intentClass": "单车/打车/地铁/公交"
+    },
+    {
+        "user_id": 3,
+        "time": "20250415_085154",
+        "scenario": "学校",
+        "app": "com.alibaba.android.rimet",
+        "originalInstruction": "打开钉钉上班打卡",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 3,
+        "time": "20250416_130607",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开深圳大学城一卡通微信小程序，蓝牙开锁",
+        "intentClass": "应用管理/设置/下载/卸载"
+    },
+    {
+        "user_id": 5,
+        "time": "20250409_120655",
+        "scenario": "学校",
+        "app": "com.bbk.appstore",
+        "originalInstruction": "打开应用商店更新所有应用",
+        "intentClass": "应用管理/设置/下载/卸载"
+    },
+    {
+        "user_id": 5,
+        "time": "20250407_132604",
+        "scenario": "学校",
+        "app": "com.tencent.weread",
+        "originalInstruction": "打开微信读书阅读乡土中国",
+        "intentClass": "阅读"
+    },
+    {
+        "user_id": 5,
+        "time": "20250408_111448",
+        "scenario": "学校",
+        "app": "com.vivo.health",
+        "originalInstruction": "打开vivo健康查看今日运动步数",
+        "intentClass": "健康与运动"
+    },
+    {
+        "user_id": 5,
+        "time": "20250411_203108",
+        "scenario": "住所",
+        "app": "com.vivo.health",
+        "originalInstruction": "打开vivo健康，查看今日运动步数",
+        "intentClass": "健康与运动"
+    },
+    {
+        "user_id": 5,
+        "time": "20250408_111510",
+        "scenario": "学校",
+        "app": "com.bbk.appstore",
+        "originalInstruction": "打开应用商店更新应用",
+        "intentClass": "应用管理/设置/下载/卸载"
+    },
+    {
+        "user_id": 6,
+        "time": "20250419_110449",
+        "scenario": "学校",
+        "app": "com.miui.home",
+        "originalInstruction": "打开王者营地查看近期战绩",
+        "intentClass": "查看战绩"
+    },
+    {
+        "user_id": 9,
+        "time": "20250422_190926",
+        "scenario": "学校",
+        "app": "com.android.launcher",
+        "originalInstruction": "使用菜鸟裹裹查看快递",
+        "intentClass": "快递物流"
+    },
+    {
+        "user_id": 9,
+        "time": "20250423_153943",
+        "scenario": "学校",
+        "app": "com.baidu.tieba",
+        "originalInstruction": "使用百度贴吧查看炉石卡组",
+        "intentClass": "帖子"
+    },
+    {
+        "user_id": 9,
+        "time": "20250422_190655",
+        "scenario": "学校",
+        "app": "com.android.launcher",
+        "originalInstruction": "使用天气软件查看天气",
+        "intentClass": "天气"
+    },
+    {
+        "user_id": 9,
+        "time": "20250422_190459",
+        "scenario": "学校",
+        "app": "com.sankuai.meituan",
+        "originalInstruction": "使用美团扫描共享单车",
+        "intentClass": "单车/打车/地铁/公交"
+    },
+    {
+        "user_id": 9,
+        "time": "20250422_190535",
+        "scenario": "学校",
+        "app": "com.android.launcher",
+        "originalInstruction": "使用网易邮箱查看邮件",
+        "intentClass": "邮件"
+    },
+    {
+        "user_id": 9,
+        "time": "20250422_190736",
+        "scenario": "学校",
+        "app": "com.pwrd.steam.esports",
+        "originalInstruction": "使用完美世界电竞查看cs比赛结果",
+        "intentClass": "游戏"
+    },
+    {
+        "user_id": 10,
+        "time": "20250408_204134",
+        "scenario": "住所",
+        "app": "com.duolingo",
+        "originalInstruction": "多邻国-完成日语课今日学习任务",
+        "intentClass": "学习与教育"
+    },
+    {
+        "user_id": 10,
+        "time": "20250412_214804",
+        "scenario": "住所",
+        "app": "com.duolingo",
+        "originalInstruction": "多邻国-完成日语课今日任务",
+        "intentClass": "学习与教育"
+    },
+    {
+        "user_id": 13,
+        "time": "20250422_233501",
+        "scenario": "学校",
+        "app": "com.bbk.launcher2",
+        "originalInstruction": "打开天气，查看明天天气情况",
+        "intentClass": "天气"
+    },
+    {
+        "user_id": 13,
+        "time": "20250418_223701",
+        "scenario": "学校",
+        "app": "com.sina.weibo",
+        "originalInstruction": "查看微博热搜榜第一名",
+        "intentClass": "新闻/热点"
+    },
+    {
+        "user_id": 13,
+        "time": "20250411_163905",
+        "scenario": "学校",
+        "app": "com.zhihu.android",
+        "originalInstruction": "查看知乎热榜第一名",
+        "intentClass": "新闻/热点"
+    },
+    {
+        "user_id": 14,
+        "time": "20250428_234930",
+        "scenario": "住所",
+        "app": "cn.com.langeasy.LangEasyLexis",
+        "originalInstruction": "打开不背单词签到背诵单词",
+        "intentClass": "学习与教育"
+    },
+    {
+        "user_id": 14,
+        "time": "20250429_234317",
+        "scenario": "住所",
+        "app": "com.shark.jizhang",
+        "originalInstruction": "打开鲨鱼记账记账",
+        "intentClass": "金融与理财"
+    },
+    {
+        "user_id": 18,
+        "time": "20250416_012328",
+        "scenario": "住所",
+        "app": "com.tencent.androidqqmail",
+        "originalInstruction": "打开qq邮箱，查看收件箱的第一条邮件",
+        "intentClass": "邮件"
+    },
+    {
+        "user_id": 22,
+        "time": "20250423_221926",
+        "scenario": "住所",
+        "app": "com.zhihu.android",
+        "originalInstruction": "打开知乎，浏览话题，查看回答并点赞收藏",
+        "intentClass": "帖子"
+    },
+    {
+        "user_id": 22,
+        "time": "20250427_211702",
+        "scenario": "住所",
+        "app": "com.ss.android.ugc.aweme",
+        "originalInstruction": "打开抖音，搜索热门，观看视频并点赞",
+        "intentClass": "视频"
+    },
+    {
+        "user_id": 22,
+        "time": "20250424_231744",
+        "scenario": "住所",
+        "app": "tv.danmaku.bili",
+        "originalInstruction": "打开bilibili，浏览推荐，观看视频并点赞",
+        "intentClass": "视频"
+    },
+    {
+        "user_id": 22,
+        "time": "20250424_232301",
+        "scenario": "住所",
+        "app": "com.sohu.newsclient",
+        "originalInstruction": "打开搜狐新闻，查看热点",
+        "intentClass": "新闻/热点"
+    },
+    {
+        "user_id": 22,
+        "time": "20250424_233057",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开抖音，浏览推荐，观看视频并点赞",
+        "intentClass": "视频"
+    },
+    {
+        "user_id": 22,
+        "time": "20250423_221722",
+        "scenario": "住所",
+        "app": "com.sohu.newsclient",
+        "originalInstruction": "打开搜狐新闻，查看热点，浏览文章并点赞",
+        "intentClass": "新闻/热点"
+    },
+    {
+        "user_id": 22,
+        "time": "20250423_221530",
+        "scenario": "住所",
+        "app": "com.netease.cloudmusic",
+        "originalInstruction": "打开网易云音乐，播放每日推荐，查看评论",
+        "intentClass": "音乐"
+    },
+    {
+        "user_id": 27,
+        "time": "20250407_214814",
+        "scenario": "住所",
+        "app": "com.ss.android.ugc.aweme",
+        "originalInstruction": "在抖音上搜索赵朔西行漫记，并播放他的第一个视频",
+        "intentClass": "视频"
+    },
+    {
+        "user_id": 27,
+        "time": "20250410_233613",
+        "scenario": "住所",
+        "app": "com.tencent.qqmusic",
+        "originalInstruction": "打开qq音乐，并搜索邓紫棋并顺序播放她的歌曲",
+        "intentClass": "音乐"
+    },
+    {
+        "user_id": 27,
+        "time": "20250410_233454",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开clash中的vpn，并更换至香港节点",
+        "intentClass": "设备管理/维护"
+    },
+    {
+        "user_id": 27,
+        "time": "20250408_200200",
+        "scenario": "住所",
+        "app": "com.tencent.qqmusic",
+        "originalInstruction": "在qq音乐中搜索邓紫棋并顺序播放她的歌曲",
+        "intentClass": "音乐"
+    },
+    {
+        "user_id": 28,
+        "time": "20250422_150608",
+        "scenario": "学校",
+        "app": "com.hihonor.android.launcher",
+        "originalInstruction": "打开懂球帝，点开第一条",
+        "intentClass": "帖子"
+    },
+    {
+        "user_id": 28,
+        "time": "20250424_204918",
+        "scenario": "商场",
+        "app": "com.hihonor.android.launcher",
+        "originalInstruction": "打开虎牙直播，点开第一条",
+        "intentClass": "视频"
+    },
+    {
+        "user_id": 28,
+        "time": "20250427_234634",
+        "scenario": "住所",
+        "app": "com.hihonor.android.launcher",
+        "originalInstruction": "打开虎扑，点开第一条",
+        "intentClass": "帖子"
+    },
+    {
+        "user_id": 29,
+        "time": "20250408_235709",
+        "scenario": "办公场所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开天气查看近三天天气情况。",
+        "intentClass": "天气"
+    },
+    {
+        "user_id": 31,
+        "time": "20250419_110852",
+        "scenario": "办公场所",
+        "app": "com.hupu.games",
+        "originalInstruction": "使用虎扑，查看nba专区，点击比赛直播查看",
+        "intentClass": "帖子"
+    },
+    {
+        "user_id": 31,
+        "time": "20250416_151437",
+        "scenario": "办公场所",
+        "app": "com.hupu.games",
+        "originalInstruction": "使用虎扑，查看CBA专区，点击第一个新闻查看详情",
+        "intentClass": "帖子"
+    },
+    {
+        "user_id": 31,
+        "time": "20250422_210812",
+        "scenario": "办公场所",
+        "app": "com.kugou.android",
+        "originalInstruction": "使用酷狗音乐，播放推荐列表，点击第二首歌",
+        "intentClass": "音乐"
+    },
+    {
+        "user_id": 32,
+        "time": "20250422_170328",
+        "scenario": "办公场所",
+        "app": "com.huawei.android.totemweather",
+        "originalInstruction": "打开天气app，查看今天天气",
+        "intentClass": "天气"
+    },
+    {
+        "user_id": 32,
+        "time": "20250421_231913",
+        "scenario": "住所",
+        "app": "tv.danmaku.bili",
+        "originalInstruction": "打开bilibili，点击首页推荐视频，点赞收藏",
+        "intentClass": "视频"
+    },
+    {
+        "user_id": 32,
+        "time": "20250423_231933",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开小红书，点击首页推荐，点赞收藏",
+        "intentClass": "社交"
+    },
+    {
+        "user_id": 32,
+        "time": "20250422_231449",
+        "scenario": "住所",
+        "app": "com.tencent.mm",
+        "originalInstruction": "打开微信，点击发现，点击朋友圈，上下滑动浏览",
+        "intentClass": "社交"
+    },
+    {
+        "user_id": 32,
+        "time": "20250422_231607",
+        "scenario": "住所",
+        "app": "com.netease.mail",
+        "originalInstruction": "打开邮件，查看最新邮件",
+        "intentClass": "邮件"
+    },
+    {
+        "user_id": 32,
+        "time": "20250422_231634",
+        "scenario": "住所",
+        "app": "com.huawei.android.totemweather",
+        "originalInstruction": "打开天气，查看明天天气",
+        "intentClass": "天气"
+    },
+    {
+        "user_id": 32,
+        "time": "20250425_222359",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开邮箱，查看最新邮件",
+        "intentClass": "邮件"
+    },
+    {
+        "user_id": 34,
+        "time": "20250417_222117",
+        "scenario": "学校",
+        "app": "com.eg.android.AlipayGphone",
+        "originalInstruction": "打开支付宝运动查看今天的步数",
+        "intentClass": "健康与运动"
+    },
+    {
+        "user_id": 34,
+        "time": "20250420_221532",
+        "scenario": "住所",
+        "app": "com.miui.home",
+        "originalInstruction": "在天气查看明天的天气",
+        "intentClass": "天气"
+    },
+    {
+        "user_id": 38,
+        "time": "20250423_215033",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开天气，查看明日天气",
+        "intentClass": "天气"
+    },
+    {
+        "user_id": 38,
+        "time": "20250423_214613",
+        "scenario": "餐饮场所",
+        "app": "com.sankuai.meituan",
+        "originalInstruction": "打开美团，点击外卖，浏览查看推荐商铺",
+        "intentClass": "点餐/外卖"
+    },
+    {
+        "user_id": 38,
+        "time": "20250424_190841",
+        "scenario": "住所",
+        "app": "com.huawei.deskclock",
+        "originalInstruction": "打开闹钟，制订明天早上七点半的闹钟",
+        "intentClass": "闹钟/计时"
+    },
+    {
+        "user_id": 39,
+        "time": "20250420_230626",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开不背单词点击learn",
+        "intentClass": "学习与教育"
+    },
+    {
+        "user_id": 40,
+        "time": "20250406_140312",
+        "scenario": "交通工具",
+        "app": "com.hihonor.android.launcher",
+        "originalInstruction": "打开多邻国，点击最新一课",
+        "intentClass": "学习与教育"
+    },
+    {
+        "user_id": 40,
+        "time": "20250406_140927",
+        "scenario": "交通工具",
+        "app": "com.netease.cloudmusic",
+        "originalInstruction": "打开网易云音乐，点击我的云贝，点击每日签到",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 40,
+        "time": "20250405_231547",
+        "scenario": "住所",
+        "app": "com.tencent.mm",
+        "originalInstruction": "打开微信，点击发现，打开朋友圈",
+        "intentClass": "社交"
+    },
+    {
+        "user_id": 41,
+        "time": "20250424_232305",
+        "scenario": "学校",
+        "app": "cn.xuexi.android",
+        "originalInstruction": "打开学习强国app，学习推荐的第一条咨询",
+        "intentClass": "学习与教育"
+    },
+    {
+        "user_id": 42,
+        "time": "20250412_172858",
+        "scenario": "住所",
+        "app": "me.ele",
+        "originalInstruction": "打开饿了么选择购物车里商品下单",
+        "intentClass": "点餐/外卖"
+    },
+    {
+        "user_id": 45,
+        "time": "20250420_141948",
+        "scenario": "住所",
+        "app": "cn.xuexi.android",
+        "originalInstruction": "打开学习强国，点击“每日答题”，完成五道题，提交答案。",
+        "intentClass": "学习与教育"
+    },
+    {
+        "user_id": 45,
+        "time": "20250420_142150",
+        "scenario": "住所",
+        "app": "cn.xuexi.android",
+        "originalInstruction": "打开学习强国，打开“要闻”板块，点击第三条推荐，观看并点赞。",
+        "intentClass": "阅读"
+    },
+    {
+        "user_id": 45,
+        "time": "20250422_211733",
+        "scenario": "住所",
+        "app": "com.xingin.xhs",
+        "originalInstruction": "打开小红书，搜索“BLG”，浏览前三条图文，点赞其中一条。",
+        "intentClass": "社交"
+    },
+    {
+        "user_id": 45,
+        "time": "20250426_104920",
+        "scenario": "住所",
+        "app": "com.hihonor.android.launcher",
+        "originalInstruction": "打开抖音首页，下滑观看第三条推荐视频，双击屏幕点赞。",
+        "intentClass": "视频"
+    },
+    {
+        "user_id": 45,
+        "time": "20250426_103522",
+        "scenario": "住所",
+        "app": "cn.xuexi.android",
+        "originalInstruction": "打开学习强国，点击“推荐”栏目，阅读第一条新闻，点赞并收藏。",
+        "intentClass": "学习与教育"
+    },
+    {
+        "user_id": 45,
+        "time": "20250423_222556",
+        "scenario": "住所",
+        "app": "cn.xuexi.android",
+        "originalInstruction": "打开学习强国，点击“推荐”栏目，阅读第一条新闻，点赞并收藏。",
+        "intentClass": "阅读"
+    },
+    {
+        "user_id": 47,
+        "time": "20250423_004633",
+        "scenario": "住所",
+        "app": "com.psyone.brainmusic",
+        "originalInstruction": "使用小睡眠app的记录睡眠功能，设置闹钟时间为“7：15”。",
+        "intentClass": "闹钟/计时"
+    },
+    {
+        "user_id": 47,
+        "time": "20250425_002838",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "使用小睡眠app的记录睡眠功能，设置闹钟时间为“8：30”。",
+        "intentClass": "闹钟/计时"
+    },
+    {
+        "user_id": 51,
+        "time": "20250422_235358",
+        "scenario": "学校",
+        "app": "com.huawei.health",
+        "originalInstruction": "打开华为运动健康记录早餐",
+        "intentClass": "健康与运动"
+    },
+    {
+        "user_id": 51,
+        "time": "20250422_235923",
+        "scenario": "学校",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开天气查看海淀区明日天气",
+        "intentClass": "天气"
+    },
+    {
+        "user_id": 51,
+        "time": "20250422_234901",
+        "scenario": "学校",
+        "app": "com.jiongji.andriod.card",
+        "originalInstruction": "百词斩复习单词",
+        "intentClass": "学习与教育"
+    },
+    {
+        "user_id": 51,
+        "time": "20250421_222835",
+        "scenario": "学校",
+        "app": "com.huawei.health",
+        "originalInstruction": "打开华为运动健康记录午餐",
+        "intentClass": "健康与运动"
+    },
+    {
+        "user_id": 51,
+        "time": "20250421_222909",
+        "scenario": "学校",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开华为运动健康记录晚餐",
+        "intentClass": "健康与运动"
+    },
+    {
+        "user_id": 52,
+        "time": "20250420_222012",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开华为运动健康查看步数",
+        "intentClass": "健康与运动"
+    },
+    {
+        "user_id": 52,
+        "time": "20250420_222158",
+        "scenario": "住所",
+        "app": "cn.com.langeasy.LangEasyLexis",
+        "originalInstruction": "打开不背单词，点击learn开始学习",
+        "intentClass": "学习与教育"
+    },
+    {
+        "user_id": 52,
+        "time": "20250421_212539",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开不背单词，点击签到",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 52,
+        "time": "20250422_225103",
+        "scenario": "住所",
+        "app": "com.koudai.weidian.buyer",
+        "originalInstruction": "打开微店查看我的全部订单",
+        "intentClass": "商品搜索与购物"
+    },
+    {
+        "user_id": 52,
+        "time": "20250425_220758",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开天气，查看明天的天气情况",
+        "intentClass": "天气"
+    },
+    {
+        "user_id": 52,
+        "time": "20250421_212002",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开抖音查看抖音热榜第一名",
+        "intentClass": "视频"
+    },
+    {
+        "user_id": 54,
+        "time": "20250421_203117",
+        "scenario": "学校",
+        "app": "com.android.BBKClock",
+        "originalInstruction": "打开闹钟设置一个9：00的闹钟",
+        "intentClass": "闹钟/计时"
+    },
+    {
+        "user_id": 54,
+        "time": "20250424_123912",
+        "scenario": "学校",
+        "app": "com.bbk.launcher2",
+        "originalInstruction": "打开闹钟时钟设置一个13：05的闹钟",
+        "intentClass": "闹钟/计时"
+    },
+    {
+        "user_id": 54,
+        "time": "20250426_171544",
+        "scenario": "学校",
+        "app": "com.bbk.launcher2",
+        "originalInstruction": "打开闹钟设置一个7：00的闹钟",
+        "intentClass": "闹钟/计时"
+    },
+    {
+        "user_id": 54,
+        "time": "20250428_222513",
+        "scenario": "学校",
+        "app": "com.ss.android.ugc.aweme",
+        "originalInstruction": "打开抖音搜索热榜第一条",
+        "intentClass": "视频"
+    },
+    {
+        "user_id": 54,
+        "time": "20250420_154319",
+        "scenario": "学校",
+        "app": "com.ss.android.ugc.aweme",
+        "originalInstruction": "打开抖音查看热榜第一条",
+        "intentClass": "视频"
+    },
+    {
+        "user_id": 54,
+        "time": "20250420_230352",
+        "scenario": "学校",
+        "app": "com.bbk.launcher2",
+        "originalInstruction": "打开闹钟时钟设置一个9：00的闹钟",
+        "intentClass": "闹钟/计时"
+    },
+    {
+        "user_id": 55,
+        "time": "20250418_235741",
+        "scenario": "学校",
+        "app": "com.hihonor.deskclock",
+        "originalInstruction": "打开时钟，将明早的闹钟设置为8点",
+        "intentClass": "闹钟/计时"
+    },
+    {
+        "user_id": 54,
+        "time": "20250421_091106",
+        "scenario": "学校",
+        "app": "com.tencent.apps.valorant",
+        "originalInstruction": "打开掌上无畏契约刷新每日商店皮肤",
+        "intentClass": "游戏"
+    },
+    {
+        "user_id": 55,
+        "time": "20250422_233342",
+        "scenario": "学校",
+        "app": "com.mihoyo.hyperion",
+        "originalInstruction": "打开米游社，查看主页前两条帖子并点赞",
+        "intentClass": "帖子"
+    },
+    {
+        "user_id": 55,
+        "time": "20250418_235828",
+        "scenario": "学校",
+        "app": "com.hihonor.android.launcher",
+        "originalInstruction": "打开不背单词，点击日历图标进行签到",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 55,
+        "time": "20250424_234946",
+        "scenario": "学校",
+        "app": "com.hihonor.android.launcher",
+        "originalInstruction": "打开米游社，查看主页第一条帖子并点赞",
+        "intentClass": "帖子"
+    },
+    {
+        "user_id": 55,
+        "time": "20250424_235031",
+        "scenario": "学校",
+        "app": "com.hihonor.android.launcher",
+        "originalInstruction": "打开米游社，点击左下角关注，查看最近的关注消息",
+        "intentClass": "社交"
+    },
+    {
+        "user_id": 55,
+        "time": "20250425_235201",
+        "scenario": "学校",
+        "app": "com.mihoyo.hyperion",
+        "originalInstruction": "打开米游社，上滑刷新主页并查看主页第一条帖子，翻到评论区",
+        "intentClass": "帖子"
+    },
+    {
+        "user_id": 55,
+        "time": "20250427_235934",
+        "scenario": "学校",
+        "app": "com.hihonor.android.launcher",
+        "originalInstruction": "打开小红书给主页第一条帖子点赞",
+        "intentClass": "社交"
+    },
+    {
+        "user_id": 55,
+        "time": "20250429_234631",
+        "scenario": "学校",
+        "app": "com.hihonor.android.launcher",
+        "originalInstruction": "打开米游社，点击右下角消息查看前两条帖子",
+        "intentClass": "帖子"
+    },
+    {
+        "user_id": 55,
+        "time": "20250422_233302",
+        "scenario": "学校",
+        "app": "com.hihonor.android.launcher",
+        "originalInstruction": "打开米游社，点击签到福利进行每日签到",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 56,
+        "time": "20250428_133859",
+        "scenario": "住所",
+        "app": "com.android.launcher",
+        "originalInstruction": "打开美团，查看当前订单状态",
+        "intentClass": "点餐/外卖"
+    },
+    {
+        "user_id": 56,
+        "time": "20250426_225952",
+        "scenario": "住所",
+        "app": "com.android.launcher",
+        "originalInstruction": "在时钟中定一个9点20分的闹钟",
+        "intentClass": "闹钟/计时"
+    },
+    {
+        "user_id": 56,
+        "time": "20250425_205033",
+        "scenario": "住所",
+        "app": "com.android.launcher",
+        "originalInstruction": "在时钟中定一个1小时的计时器",
+        "intentClass": "闹钟/计时"
+    },
+    {
+        "user_id": 56,
+        "time": "20250428_235225",
+        "scenario": "住所",
+        "app": "com.android.launcher",
+        "originalInstruction": "在时钟中打开7点半的闹钟",
+        "intentClass": "闹钟/计时"
+    },
+    {
+        "user_id": 56,
+        "time": "20250422_224207",
+        "scenario": "住所",
+        "app": "com.android.launcher",
+        "originalInstruction": "打开美团，查看订单状况",
+        "intentClass": "点餐/外卖"
+    },
+    {
+        "user_id": 56,
+        "time": "20250422_222822",
+        "scenario": "学校",
+        "app": "com.android.launcher",
+        "originalInstruction": "打开多邻国，查看排行榜和每日任务",
+        "intentClass": "学习与教育"
+    },
+    {
+        "user_id": 57,
+        "time": "20250427_000904",
+        "scenario": "住所",
+        "app": "com.tencent.mm",
+        "originalInstruction": "未定事件簿微信小程序签到",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 57,
+        "time": "20250422_100337",
+        "scenario": "住所",
+        "app": "cc.forestapp",
+        "originalInstruction": "领取forest专注挑战奖励",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 59,
+        "time": "20250404_101157",
+        "scenario": "住所",
+        "app": "com.duolingo",
+        "originalInstruction": "在多邻国点击日语,查看排位后点击课程开始学习最新课程",
+        "intentClass": "学习与教育"
+    },
+    {
+        "user_id": 61,
+        "time": "20250412_104223",
+        "scenario": "住所",
+        "app": "com.mihoyo.hyperion",
+        "originalInstruction": "打开米游社，在“签到福利”中点击签到，在退回主界面找到“酒馆”打卡",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 61,
+        "time": "20250415_233919",
+        "scenario": "住所",
+        "app": "com.android.launcher",
+        "originalInstruction": "打开时钟，找到“计时器”，在“计时器”界面找到“刷牙”的标签，并点击开始倒计时",
+        "intentClass": "闹钟/计时"
+    },
+    {
+        "user_id": 63,
+        "time": "20250426_210046",
+        "scenario": "学校",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开华为运动健康，查看今日步数",
+        "intentClass": "健康与运动"
+    },
+    {
+        "user_id": 64,
+        "time": "20250422_233205",
+        "scenario": "住所",
+        "app": "com.sina.weibo",
+        "originalInstruction": "打开微博查看热搜榜第一名",
+        "intentClass": "新闻/热点"
+    },
+    {
+        "user_id": 64,
+        "time": "20250420_211217",
+        "scenario": "住所",
+        "app": "com.netease.cloudmusic",
+        "originalInstruction": "打开网易云每日推荐收听第一首歌",
+        "intentClass": "音乐"
+    },
+    {
+        "user_id": 64,
+        "time": "20250420_211302",
+        "scenario": "住所",
+        "app": "com.huawei.health",
+        "originalInstruction": "打开华为运动健康查看昨晚的睡眠质量检测",
+        "intentClass": "健康与运动"
+    },
+    {
+        "user_id": 64,
+        "time": "20250421_235042",
+        "scenario": "住所",
+        "app": "com.netease.cloudmusic",
+        "originalInstruction": "打开网易云音乐播放每日推荐的第一首歌",
+        "intentClass": "音乐"
+    },
+    {
+        "user_id": 64,
+        "time": "20250421_235113",
+        "scenario": "住所",
+        "app": "com.example.fingertip",
+        "originalInstruction": "打开天气查看最近天气情况",
+        "intentClass": "天气"
+    },
+    {
+        "user_id": 64,
+        "time": "20250427_233649",
+        "scenario": "住所",
+        "app": "com.caing.news",
+        "originalInstruction": "打开财新阅读推荐的第一条新闻",
+        "intentClass": "新闻/热点"
+    },
+    {
+        "user_id": 64,
+        "time": "20250421_235228",
+        "scenario": "住所",
+        "app": "com.huawei.health",
+        "originalInstruction": "打开华为运动健康查看昨晚的睡眠监测",
+        "intentClass": "健康与运动"
+    },
+    {
+        "user_id": 64,
+        "time": "20250420_211339",
+        "scenario": "住所",
+        "app": "com.caing.news",
+        "originalInstruction": "打开财新查看第一条新闻",
+        "intentClass": "新闻/热点"
+    },
+    {
+        "user_id": 65,
+        "time": "20250426_220351",
+        "scenario": "运动场馆",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开乐动力，结束阳光打卡",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 65,
+        "time": "20250421_220905",
+        "scenario": "住所",
+        "app": "tv.danmaku.bili",
+        "originalInstruction": "打开哔哩哔哩，播放麻薯波比最新视频。",
+        "intentClass": "视频"
+    },
+    {
+        "user_id": 67,
+        "time": "20250423_210357",
+        "scenario": "住所",
+        "app": "com.android.launcher",
+        "originalInstruction": "打开QQ查看第一条未读消息",
+        "intentClass": "社交"
+    },
+    {
+        "user_id": 67,
+        "time": "20250424_213531",
+        "scenario": "住所",
+        "app": "com.android.launcher",
+        "originalInstruction": "打开知乎，查看首页推荐第一个问题",
+        "intentClass": "帖子"
+    },
+    {
+        "user_id": 67,
+        "time": "20250424_233054",
+        "scenario": "住所",
+        "app": "com.android.mms",
+        "originalInstruction": "打开信息，查看第一条未读消息",
+        "intentClass": "社交"
+    },
+    {
+        "user_id": 69,
+        "time": "20250420_234600",
+        "scenario": "住所",
+        "app": "com.android.launcher",
+        "originalInstruction": "给哔哩哔哩当前视频点赞",
+        "intentClass": "社交"
+    },
+    {
+        "user_id": 69,
+        "time": "20250422_235252",
+        "scenario": "住所",
+        "app": "com.android.launcher",
+        "originalInstruction": "在哔哩哔哩给当前的视频点赞",
+        "intentClass": "视频"
+    },
+    {
+        "user_id": 69,
+        "time": "20250416_235644",
+        "scenario": "住所",
+        "app": "com.android.launcher",
+        "originalInstruction": "在时钟设置一个九点的闹钟",
+        "intentClass": "闹钟/计时"
+    },
+    {
+        "user_id": 71,
+        "time": "20250414_210951",
+        "scenario": "自然户外",
+        "app": "com.mi.health",
+        "originalInstruction": "打开小米运动健康开始户外跑",
+        "intentClass": "健康与运动"
+    },
+    {
+        "user_id": 71,
+        "time": "20250412_164339",
+        "scenario": "娱乐休闲场所",
+        "app": "com.mi.health",
+        "originalInstruction": "打开小米运动健康查看昨晚睡眠情况",
+        "intentClass": "健康与运动"
+    },
+    {
+        "user_id": 72,
+        "time": "20250421_192319",
+        "scenario": "自然户外",
+        "app": "com.mi.health",
+        "originalInstruction": "打开小米运动记录跑步",
+        "intentClass": "健康与运动"
+    },
+    {
+        "user_id": 72,
+        "time": "20250418_103757",
+        "scenario": "住所",
+        "app": "tv.danmaku.bili",
+        "originalInstruction": "打开哔哩哔哩搜索腹肌撕裂者看第一个视频",
+        "intentClass": "视频"
+    },
+    {
+        "user_id": 73,
+        "time": "20250423_082651",
+        "scenario": "医疗机构",
+        "app": "com.eg.android.AlipayGphone",
+        "originalInstruction": "打开蚂蚁，森林收集能量",
+        "intentClass": "健康与运动"
+    },
+    {
+        "user_id": 73,
+        "time": "20250423_225109",
+        "scenario": "住所",
+        "app": "com.zhihu.vip.android",
+        "originalInstruction": "打开盐言故事，看好评榜睡前故事",
+        "intentClass": "阅读"
+    },
+    {
+        "user_id": 73,
+        "time": "20250419_145854",
+        "scenario": "住所",
+        "app": "com.jingdong.app.mall",
+        "originalInstruction": "打开京东，助力好友东东农场浇水任务",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 73,
+        "time": "20250419_150055",
+        "scenario": "住所",
+        "app": "com.eg.android.AlipayGphone",
+        "originalInstruction": "打开支付宝，蚂蚁庄园领饲料喂食小鸡",
+        "intentClass": "支付"
+    },
+    {
+        "user_id": 73,
+        "time": "20250421_080940",
+        "scenario": "办公场所",
+        "app": "com.jingdong.app.mall",
+        "originalInstruction": "打开京东，助力好友东东农场浇水",
+        "intentClass": "商品搜索与购物"
+    },
+    {
+        "user_id": 73,
+        "time": "20250419_235206",
+        "scenario": "住所",
+        "app": "com.zhihu.vip.android",
+        "originalInstruction": "打开盐言故事，看七天免费专区睡前故事",
+        "intentClass": "阅读"
+    },
+    {
+        "user_id": 73,
+        "time": "20250421_080344",
+        "scenario": "办公场所",
+        "app": "com.eg.android.AlipayGphone",
+        "originalInstruction": "打开支付宝。蚂蚁森林收集能量",
+        "intentClass": "金融与理财"
+    },
+    {
+        "user_id": 73,
+        "time": "20250420_182611",
+        "scenario": "住所",
+        "app": "com.jingdong.app.mall",
+        "originalInstruction": "打开京东，助力好友东东浇水任务",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 73,
+        "time": "20250425_224611",
+        "scenario": "住所",
+        "app": "com.zhihu.vip.android",
+        "originalInstruction": "打开盐言故事，看榜单前三睡前故事",
+        "intentClass": "阅读"
+    },
+    {
+        "user_id": 73,
+        "time": "20250420_200858",
+        "scenario": "城市街道",
+        "app": "com.taobao.taobao",
+        "originalInstruction": "打开淘宝，红包签到做任务赚元宝",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 73,
+        "time": "20250419_124504",
+        "scenario": "餐饮场所",
+        "app": "com.eg.android.AlipayGphone",
+        "originalInstruction": "打开支付宝，芭芭农场做任务施肥",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 73,
+        "time": "20250421_224533",
+        "scenario": "住所",
+        "app": "com.zhihu.vip.android",
+        "originalInstruction": "打开盐言故事，看推荐睡前故事",
+        "intentClass": "阅读"
+    },
+    {
+        "user_id": 75,
+        "time": "20250425_221441",
+        "scenario": "住所",
+        "app": "com.weico.international",
+        "originalInstruction": "打开微博查看文娱热搜榜第一条",
+        "intentClass": "新闻/热点"
+    },
+    {
+        "user_id": 75,
+        "time": "20250423_235533",
+        "scenario": "住所",
+        "app": "tv.danmaku.bili",
+        "originalInstruction": "打开b站查看热门榜第一条视频",
+        "intentClass": "视频"
+    },
+    {
+        "user_id": 75,
+        "time": "20250421_204708",
+        "scenario": "住所",
+        "app": "com.weico.international",
+        "originalInstruction": "打开微博查看文娱热搜榜第一条",
+        "intentClass": "新闻/热点"
+    },
+    {
+        "user_id": 75,
+        "time": "20250419_222316",
+        "scenario": "住所",
+        "app": "com.tencent.qqmusic",
+        "originalInstruction": "打开QQ音乐进行签到",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 75,
+        "time": "20250422_212456",
+        "scenario": "住所",
+        "app": "com.dragon.read",
+        "originalInstruction": "打开番茄免费小说签到",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 75,
+        "time": "20250421_204636",
+        "scenario": "住所",
+        "app": "com.weico.international",
+        "originalInstruction": "打开微博恋与深空超话签到",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 75,
+        "time": "20250420_204901",
+        "scenario": "住所",
+        "app": "com.sec.android.app.sbrowser",
+        "originalInstruction": "打开天气查看明天天气",
+        "intentClass": "天气"
+    },
+    {
+        "user_id": 75,
+        "time": "20250420_204701",
+        "scenario": "住所",
+        "app": "com.ss.android.ugc.aweme",
+        "originalInstruction": "打开抖音点赞推荐的第一条视频",
+        "intentClass": "视频"
+    },
+    {
+        "user_id": 75,
+        "time": "20250420_204042",
+        "scenario": "住所",
+        "app": "com.taobao.idlefish",
+        "originalInstruction": "打开闲鱼一键擦亮我的商品",
+        "intentClass": "商品搜索与购物"
+    },
+    {
+        "user_id": 75,
+        "time": "20250419_224424",
+        "scenario": "住所",
+        "app": "tv.danmaku.bili",
+        "originalInstruction": "查看b站热门榜第一条视频并点赞",
+        "intentClass": "视频"
+    },
+    {
+        "user_id": 76,
+        "time": "20250405_234520",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开闹钟，开启排序第一的闹钟",
+        "intentClass": "闹钟/计时"
+    },
+    {
+        "user_id": 76,
+        "time": "20250402_234352",
+        "scenario": "住所",
+        "app": "com.netease.cloudmusic",
+        "originalInstruction": "打开网易云音乐，点击左上角选单，点击定时关闭，设置30分钟",
+        "intentClass": "音乐"
+    },
+    {
+        "user_id": 76,
+        "time": "20250402_233757",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开起点读书，点击签到",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 76,
+        "time": "20250402_233632",
+        "scenario": "住所",
+        "app": "com.kuangxiangciweimao.novel",
+        "originalInstruction": "打开刺猬猫阅读，点击读书一栏，点击签到",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 76,
+        "time": "20250402_233911",
+        "scenario": "住所",
+        "app": "com.huawei.deskclock",
+        "originalInstruction": "打开时钟，开启排序第二的闹钟",
+        "intentClass": "闹钟/计时"
+    },
+    {
+        "user_id": 77,
+        "time": "20250413_100325",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开开心消消乐完成签到",
+        "intentClass": "游戏"
+    },
+    {
+        "user_id": 77,
+        "time": "20250413_082625",
+        "scenario": "住所",
+        "app": "com.xs.fm.lite",
+        "originalInstruction": "打开番茄畅听完成签到",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 77,
+        "time": "20250413_100222",
+        "scenario": "住所",
+        "app": "com.tencent.qqlive",
+        "originalInstruction": "打开腾讯视频完成签到",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 77,
+        "time": "20250413_100252",
+        "scenario": "住所",
+        "app": "com.kuaishou.nebula",
+        "originalInstruction": "打开快手极速版完成签到",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 77,
+        "time": "20250413_100408",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开手机管家清理加速垃圾文件立即清理",
+        "intentClass": "设备管理/维护"
+    },
+    {
+        "user_id": 79,
+        "time": "20250421_101505",
+        "scenario": "住所",
+        "app": "com.huawei.android.totemweather",
+        "originalInstruction": "打开天气查看明天天气情况",
+        "intentClass": "天气"
+    },
+    {
+        "user_id": 80,
+        "time": "20250414_092938",
+        "scenario": "办公场所",
+        "app": "com.reading91.app",
+        "originalInstruction": "打开91reading完成签到",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 80,
+        "time": "20250418_115246",
+        "scenario": "办公场所",
+        "app": "com.xs.fm",
+        "originalInstruction": "用番茄畅听完成签到",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 83,
+        "time": "20250416_233204",
+        "scenario": "住所",
+        "app": "com.mihoyo.hyperion",
+        "originalInstruction": "使用米游社进行今日签到",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 86,
+        "time": "20250424_075035",
+        "scenario": "交通工具",
+        "app": "com.tyky.guizhou.dangjian.party",
+        "originalInstruction": "打开筑红云App完成今日学习任务",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 86,
+        "time": "20250423_075155",
+        "scenario": "交通工具",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开沃尔沃汽车App完成今日签到任务",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 86,
+        "time": "20250423_075459",
+        "scenario": "交通工具",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开天气预报，查看贵阳市乌当区15日内的天气状况",
+        "intentClass": "天气"
+    },
+    {
+        "user_id": 86,
+        "time": "20250424_075258",
+        "scenario": "交通工具",
+        "app": "cn.xuexi.android",
+        "originalInstruction": "打开学习强国App完成今日学习任务",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 86,
+        "time": "20250424_074835",
+        "scenario": "城市街道",
+        "app": "com.eg.android.AlipayGphone",
+        "originalInstruction": "打开支付宝之出行，调出“贵阳电子公交卡”，扫码乘坐公共交通汽车",
+        "intentClass": "单车/打车/地铁/公交"
+    },
+    {
+        "user_id": 88,
+        "time": "20250406_172713",
+        "scenario": "住所",
+        "app": "com.eastmoney.android.berlin",
+        "originalInstruction": "打开东方财富查看股市行情",
+        "intentClass": "金融与理财"
+    },
+    {
+        "user_id": 88,
+        "time": "20250406_173104",
+        "scenario": "住所",
+        "app": "com.simshine.cn.aiothd",
+        "originalInstruction": "打开海马爸比查看宝宝情况",
+        "intentClass": "家庭监控"
+    },
+    {
+        "user_id": 88,
+        "time": "20250408_070833",
+        "scenario": "住所",
+        "app": "com.eastmoney.android.berlin",
+        "originalInstruction": "打开东方财富查看股市",
+        "intentClass": "金融与理财"
+    },
+    {
+        "user_id": 88,
+        "time": "20250406_074152",
+        "scenario": "住所",
+        "app": "com.ss.android.ugc.aweme",
+        "originalInstruction": "打开抖音许琼娜财经新闻",
+        "intentClass": "视频"
+    },
+    {
+        "user_id": 89,
+        "time": "20250421_194900",
+        "scenario": "办公场所",
+        "app": "com.android.launcher",
+        "originalInstruction": "打开天气，查看明天天气",
+        "intentClass": "天气"
+    },
+    {
+        "user_id": 93,
+        "time": "20250417_225046",
+        "scenario": "其他",
+        "app": "cn.xuexi.android",
+        "originalInstruction": "到学习强国完成今天任务",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 93,
+        "time": "20250408_194815",
+        "scenario": "文艺场馆",
+        "app": "com.tencent.weread",
+        "originalInstruction": "到微信读书阅读菜根谭",
+        "intentClass": "阅读"
+    },
+    {
+        "user_id": 93,
+        "time": "20250413_230536",
+        "scenario": "交通工具",
+        "app": "cn.xuexi.android",
+        "originalInstruction": "到学习强国完成完成今天任务",
+        "intentClass": "签到/做任务/打卡"
+    },
+    {
+        "user_id": 93,
+        "time": "20250412_120017",
+        "scenario": "交通工具",
+        "app": "com.xingin.xhs",
+        "originalInstruction": "到美团搜索附近摩拜单车",
+        "intentClass": "单车/打车/地铁/公交"
+    },
+    {
+        "user_id": 94,
+        "time": "20250413_080402",
+        "scenario": "住所",
+        "app": "com.huawei.health",
+        "originalInstruction": "打开华为运动健康查昨晚的睡眠",
+        "intentClass": "健康与运动"
+    },
+    {
+        "user_id": 94,
+        "time": "20250413_080511",
+        "scenario": "住所",
+        "app": "com.miui.home",
+        "originalInstruction": "打开天气APP查看当地24小时天气",
+        "intentClass": "天气"
+    },
+    {
+        "user_id": 94,
+        "time": "20250416_205016",
+        "scenario": "住所",
+        "app": "com.android.deskclock",
+        "originalInstruction": "打开闹钟，定一个明天早上七点钟的闹钟。",
+        "intentClass": "闹钟/计时"
+    },
+    {
+        "user_id": 94,
+        "time": "20250416_151849",
+        "scenario": "自然户外",
+        "app": "com.tencent.mm",
+        "originalInstruction": "打开微信用扫一扫识别植物",
+        "intentClass": "扫描"
+    },
+    {
+        "user_id": 94,
+        "time": "20250413_080556",
+        "scenario": "住所",
+        "app": "com.tencent.mm",
+        "originalInstruction": "打开微信查看消息和朋友圈动态",
+        "intentClass": "社交"
+    },
+    {
+        "user_id": 94,
+        "time": "20250412_202607",
+        "scenario": "住所",
+        "app": "com.huawei.health",
+        "originalInstruction": "打开华为运动健康查看今天的运动数据",
+        "intentClass": "健康与运动"
+    },
+    {
+        "user_id": 94,
+        "time": "20250412_235652",
+        "scenario": "住所",
+        "app": "com.miui.home",
+        "originalInstruction": "打开微信，找到百事记账小程序记录今日费用",
+        "intentClass": "支付"
+    },
+    {
+        "user_id": 94,
+        "time": "20250415_081114",
+        "scenario": "住所",
+        "app": "com.xingin.xhs",
+        "originalInstruction": "打开小红书，找到并播放第二条视频",
+        "intentClass": "视频"
+    },
+    {
+        "user_id": 94,
+        "time": "20250414_153712",
+        "scenario": "住所",
+        "app": "com.tencent.mm",
+        "originalInstruction": "打开微信，用扫一扫识别相册中的植物",
+        "intentClass": "扫描"
+    },
+    {
+        "user_id": 94,
+        "time": "20250419_175657",
+        "scenario": "自然户外",
+        "app": "com.miui.home",
+        "originalInstruction": "打开微信百事记账小程序，记录今日费用。",
+        "intentClass": "金融与理财"
+    },
+    {
+        "user_id": 94,
+        "time": "20250412_235755",
+        "scenario": "住所",
+        "app": "com.miui.home",
+        "originalInstruction": "打开闹钟，定一个明天早上八点半的闹钟",
+        "intentClass": "闹钟/计时"
+    },
+    {
+        "user_id": 94,
+        "time": "20250417_224005",
+        "scenario": "住所",
+        "app": "com.huawei.health",
+        "originalInstruction": "打开华为运动健康，查看今日运动数据。",
+        "intentClass": "健康与运动"
+    },
+    {
+        "user_id": 94,
+        "time": "20250415_220739",
+        "scenario": "住所",
+        "app": "com.android.deskclock",
+        "originalInstruction": "打开闹钟，定一个明天早上五点钟的闹钟。",
+        "intentClass": "闹钟/计时"
+    },
+    {
+        "user_id": 95,
+        "time": "20250413_200003",
+        "scenario": "住所",
+        "app": "com.huawei.health",
+        "originalInstruction": "打开华为运动健康，查今天的运动数据。",
+        "intentClass": "健康与运动"
+    },
+    {
+        "user_id": 95,
+        "time": "20250413_141115",
+        "scenario": "住所",
+        "app": "com.tencent.mtt",
+        "originalInstruction": "打开QQ浏览器看今天第一条带图新闻。",
+        "intentClass": "新闻/热点"
+    },
+    {
+        "user_id": 95,
+        "time": "20250418_091228",
+        "scenario": "住所",
+        "app": "com.huawei.android.totemweather",
+        "originalInstruction": "打开天气APP，查当地的天气预报。",
+        "intentClass": "天气"
+    },
+    {
+        "user_id": 95,
+        "time": "20250414_075458",
+        "scenario": "住所",
+        "app": "com.tencent.mtt",
+        "originalInstruction": "打开QQ浏览器看今天第一条新闻。",
+        "intentClass": "新闻/热点"
+    },
+    {
+        "user_id": 95,
+        "time": "20250416_060610",
+        "scenario": "住所",
+        "app": "com.huawei.health",
+        "originalInstruction": "打开华为运动健康，查昨天的睡眠",
+        "intentClass": "健康与运动"
+    },
+    {
+        "user_id": 95,
+        "time": "20250417_085533",
+        "scenario": "自然户外",
+        "app": "com.huawei.android.totemweather",
+        "originalInstruction": "打开天气APP，查当地天气。",
+        "intentClass": "天气"
+    },
+    {
+        "user_id": 95,
+        "time": "20250416_091629",
+        "scenario": "交通工具",
+        "app": "com.huawei.browser",
+        "originalInstruction": "打开浏览器看今日每日早报。",
+        "intentClass": "新闻/热点"
+    },
+    {
+        "user_id": 95,
+        "time": "20250416_060731",
+        "scenario": "住所",
+        "app": "com.huawei.android.totemweather",
+        "originalInstruction": "打开天气APP，查当地天气预报。",
+        "intentClass": "天气"
+    },
+    {
+        "user_id": 95,
+        "time": "20250414_113700",
+        "scenario": "住所",
+        "app": "com.huawei.android.totemweather",
+        "originalInstruction": "打开天气APP查当地天气。",
+        "intentClass": "天气"
+    },
+    {
+        "user_id": 95,
+        "time": "20250413_140511",
+        "scenario": "住所",
+        "app": "com.huawei.browser",
+        "originalInstruction": "打开浏览器看今天的每日早报。",
+        "intentClass": "新闻/热点"
+    },
+    {
+        "user_id": 96,
+        "time": "20250414_182826",
+        "scenario": "其他",
+        "app": "com.gf.client",
+        "originalInstruction": "打开广发易淘金查看股市收盘情况",
+        "intentClass": "金融与理财"
+    },
+    {
+        "user_id": 96,
+        "time": "20250412_172432",
+        "scenario": "其他",
+        "app": "cn.xuexi.android",
+        "originalInstruction": "打开学习强国查看新闻联播第一条信息",
+        "intentClass": "新闻/热点"
+    },
+    {
+        "user_id": 96,
+        "time": "20250412_171400",
+        "scenario": "其他",
+        "app": "com.ss.android.article.lite",
+        "originalInstruction": "打开头条极速版查看热榜第一条信息",
+        "intentClass": "新闻/热点"
+    },
+    {
+        "user_id": 96,
+        "time": "20250413_172833",
+        "scenario": "其他",
+        "app": "com.cutv.shakeshakestglt",
+        "originalInstruction": "打开汕头橄榄台查看热点信息",
+        "intentClass": "新闻/热点"
+    },
+    {
+        "user_id": 96,
+        "time": "20250413_080635",
+        "scenario": "其他",
+        "app": "com.tencent.mm",
+        "originalInstruction": "打开微信朋友圈查看第一条信息",
+        "intentClass": "社交"
+    },
+    {
+        "user_id": 96,
+        "time": "20250414_183845",
+        "scenario": "其他",
+        "app": "com.ss.android.article.lite",
+        "originalInstruction": "打开头条极速版查看推荐第一条信息",
+        "intentClass": "新闻/热点"
+    },
+    {
+        "user_id": 96,
+        "time": "20250417_132933",
+        "scenario": "其他",
+        "app": "cn.xuexi.android",
+        "originalInstruction": "打开学习强国查看要闻第一条信息",
+        "intentClass": "新闻/热点"
+    },
+    {
+        "user_id": 96,
+        "time": "20250416_184344",
+        "scenario": "其他",
+        "app": "com.hihonor.deskclock",
+        "originalInstruction": "打开时钟设置上午8：30闹钟",
+        "intentClass": "闹钟/计时"
+    },
+    {
+        "user_id": 96,
+        "time": "20250414_085339",
+        "scenario": "其他",
+        "app": "com.tencent.mm",
+        "originalInstruction": "打开微信公众号查看胡锡进观察第一条信息",
+        "intentClass": "帖子"
+    },
+    {
+        "user_id": 96,
+        "time": "20250412_171224",
+        "scenario": "其他",
+        "app": "com.huawei.appmarket",
+        "originalInstruction": "打开华为应用查看运用更新",
+        "intentClass": "应用管理/设置/下载/卸载"
+    },
+    {
+        "user_id": 100,
+        "time": "20250424_200236",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开抖音，红心点赞第一个视频",
+        "intentClass": "视频"
+    },
+    {
+        "user_id": 100,
+        "time": "20250428_200424",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开时钟，打开明早9:00的闹钟",
+        "intentClass": "闹钟/计时"
+    },
+    {
+        "user_id": 100,
+        "time": "20250424_200420",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开汽水音乐，将当前音乐切换到下一首",
+        "intentClass": "音乐"
+    },
+    {
+        "user_id": 100,
+        "time": "20250424_200544",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开微博，查看微博热搜榜第一名",
+        "intentClass": "新闻/热点"
+    },
+    {
+        "user_id": 100,
+        "time": "20250424_201234",
+        "scenario": "住所",
+        "app": "com.huawei.android.launcher",
+        "originalInstruction": "打开天气，查看最近天气情况",
+        "intentClass": "天气"
+    }
+]
