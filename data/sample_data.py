@@ -22,7 +22,7 @@ for user in sampled_rows:
             "ambiguous_instruction": ambiguous_prompt,
             "id": user_id + '_' + time + '_0',
             "answer": f"open_app(app_name='{user['app_name']}')",
-            "img_path": '',
+            "img_path": './samples/desktop.jpg',
             "app_name": user['app_name']
         }
         result_json.append(open_app_data)

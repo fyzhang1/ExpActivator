@@ -85,7 +85,7 @@ To support PersonalAlign, agent memory should generalize stable representations 
 ## :handshake: Acknowledgement
 Many thanks to the contribution from [FingerTip](https://arxiv.org/abs/2507.21071). When training models or using the dataset for personal agent, please strictly respect and protect user privacy and data security. 
 
-We sincerely apologize for the delay in open-sourcing. A server disk failure caused significant data loss, but we have tried our best to restore this repo. If PersonalAlign helps your research, please kindly consider giving us a Star🌟 to support us! 
+We sincerely apologize for the delay in open-sourcing. A server disk failure caused significant data loss, and we have tried our best to restore this repo. If PersonalAlign helps your research, please kindly consider giving us a Star🌟 to support us! 
 
 If you find this work useful for your research, please also kindly cite our paper.
 ```

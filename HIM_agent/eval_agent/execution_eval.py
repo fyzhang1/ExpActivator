@@ -27,6 +27,12 @@ args = parser.parse_args()
 
 print(args.save_file)
 device = args.device
+# offline inference
+ambiguous_embed = np.load('./ambiguous_embed.npy', allow_pickle=True).item()
+
+# online inference
+# model = SentenceTransformer('Qwen/Qwen3-Embedding-0.6B')
+# ambiguous_embed = model.encode(ambiguous_intent).reshape(1, -1)
 
 total_token = 0
 generate_token = 0
@@ -127,7 +133,8 @@ def get_HIM_summaries(user_id, exe_id=''):
     with open(os.path.join(args.HIM_path, f'user_{user_id}_clusters.json'), 'r', encoding='utf-8') as f:
         user_preference = json.load(f)
     embed_id = '_'.join(exe_id.split('_')[:-1])
-    # TODO: save ambiguous embed
+
+    # To acceralate the evaluation, we stored the ambiguous instruction embeddings in advance
     ambiguous_embed_ = ambiguous_embed[embed_id]
     embeds = []
     cluster_refs = []
