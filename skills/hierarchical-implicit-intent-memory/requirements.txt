@@ -1,0 +1,3 @@
+# Standalone HIM-style memory: numpy only.
+# Optional: pip install sentence-transformers  for real embeddings instead of hash embeddings.
+numpy>=1.20

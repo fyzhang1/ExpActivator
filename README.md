@@ -81,6 +81,11 @@ Note: To prevent the agent from returning non-standard JSON that might interfere
 ## :balloon: HIM-Agent
 To support PersonalAlign, agent memory should generalize stable representations to exclude one-off moments while separating preferences and routines, and continuously evolve to stay aligned with user intents. We introduce HIM-Agent, a foundational and inspirational personal agent memory that enables GUI agents to rapidly leverage long-term records as context for personalization without interfering with original execution. We construct a streaming update memory and hierarchically organize memory prototypes into Preference Intent Memory and Routine Intent Memory through the execution-based and state-based filter to enable hierarchical intent alignment. 
 
+## :memo: PersonalAlign.SKILL
+We attempt to generalize our method into reusable skills, aiming to make it applicable beyond GUI scenarios to broader agent settings. We have implemented a preliminary skills-beta version, and the detailed design can be found in [README-skills](README-skills.md).
+
+In migrating from the GUI setting to a more general agent scenario, we introduced several adaptations, while retaining the core components: daily-update, preference_memory, and routine_memory.
+
 
 ## :handshake: Acknowledgement
 Many thanks to the contribution from [FingerTip](https://arxiv.org/abs/2507.21071). When training models or using the dataset for personal agent, please strictly respect and protect user privacy and data security. 
