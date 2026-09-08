@@ -36,6 +36,59 @@ Paired episode bootstrap 95% confidence intervals for TRACE over its app-only
 ablation are `[+11.691,+15.629]` percentage points for SSR,
 `[+2.203,+6.025]` points for CSR, and `[+2.288,+5.870]` points for Type.
 
+### Complete frozen-backbone stress test
+
+Three additional local backbones were evaluated on the same 775 episodes and
+7,915 teacher-forced actions with ambiguous instructions: MAI-UI-8B,
+Qwen3.5-9B, and GUI-Owl-1.5-8B-Instruct.  Each run used deterministic BF16
+decoding, a 200,704-pixel image budget, a 256-token output cap, and physical
+GPU 0 only.  `+ TRACE app` is a controlled hybrid: it replaces only the 775
+episode-start actions with TRACE's already-fixed omission-aware app prediction
+and retains that model's other 7,140 predictions exactly.
+
+| Method | Type | SSR | CSR | First-step SR | Non-first SR |
+|---|---:|---:|---:|---:|---:|
+| Paired Qwen3-VL baseline | 52.748 | 20.354 | 24.632 | 26.452 | 19.692 |
+| MAI-UI-8B | 51.762 | 17.890 | 22.260 | 22.323 | 17.409 |
+| MAI-UI-8B + TRACE app | 54.340 | 23.449 | 47.963 | 79.097 | 17.409 |
+| Qwen3.5-9B | 50.120 | 17.183 | 21.427 | 22.839 | 16.569 |
+| Qwen3.5-9B + TRACE app | 52.697 | 22.691 | 47.307 | 79.097 | 16.569 |
+| GUI-Owl-1.5-8B | 58.181 | 22.742 | 21.515 | 26.839 | 22.297 |
+| GUI-Owl-1.5-8B + TRACE app | 58.800 | 27.858 | 45.982 | 79.097 | 22.297 |
+| **TRACE (fixed final system)** | **58.825** | **39.116** | **53.615** | **79.097** | **34.776** |
+
+The app front-end raises full SSR by `+5.559`, `+5.509`, and `+5.117`
+points for MAI-UI, Qwen3.5, and GUI-Owl respectively.  Because CSR emphasizes
+early actions, the corresponding gains are `+25.704`, `+25.880`, and
+`+24.467` points.  These changes are paired and leave every non-first action
+fixed.
+
+Even after giving each backbone the identical successful app front-end, final
+TRACE raises SSR by `+15.666` points over MAI-UI (95% CI
+`[+13.830,+17.610]`), `+16.425` over Qwen3.5
+(`[+14.546,+18.390]`), and `+11.257` over GUI-Owl
+(`[+9.407,+13.092]`).  The corresponding CSR gains are `+5.652`, `+6.308`,
+and `+7.633` points.  Since first-step predictions are now identical, these
+gains isolate the later state-synchronization component: non-first SR improves
+by `+17.367`, `+18.207`, and `+12.479` points.
+
+GUI-Owl is the strongest raw additional backbone and exceeds TRACE on `scroll`
+alone (42.585% versus 38.277%), but it is weaker on the much larger `click`
+class and on `wait`, `finished`, and `type`.  Its app-corrected Type is
+statistically indistinguishable from TRACE (`+0.025` point for TRACE; 95% CI
+`[-1.755,+1.788]`), while its SSR and CSR remain substantially lower.
+
+The three new raw runs share one vLLM 0.28.0 / Transformers 5.16.1 inference
+stack, so their mutual comparison and each raw-versus-app control are aligned.
+The older paired Qwen3-VL file came from the upstream Transformers evaluator;
+new-backbone-versus-Qwen3-VL deltas therefore include a possible inference-
+backend effect and are descriptive rather than the primary controlled claim.
+All output files record model revision, parser route, dataset hash, image and
+token budgets, backend version, and visible-device identity.  Unrecoverable
+action parses were 66/7,915 (0.834%) for MAI-UI, 16/7,915 (0.202%) for
+Qwen3.5, and 1/7,915 (0.013%) for GUI-Owl; every raw response is retained for
+audit.
+
 ### Proactive suggestion
 
 The proactive results use the official chronological first-80%-per-user
@@ -306,6 +359,11 @@ Execution code:
 - `evaluate_rgb_ablation.py`: RGB-MSE and controlled execution ablations.
 - `evaluate_execution.py`: complete selected-state evaluation.
 - `analyze_execution.py`: paired statistics, overlap, and leakage audits.
+- `../src/eval_execution/evaluation_new_backbones.py`: batched Transformers
+  evaluator and shared tolerant action parser for recent VLMs.
+- `../src/eval_execution/evaluation_new_backbones_vllm.py`: GPU-0-pinned
+  continuous-batching evaluator used for the complete stress test.
+- `analyze_backbones.py`: paired backbone, app-front-end, and TRACE controls.
 
 Proactive code:
 
@@ -322,6 +380,8 @@ Generated results (ignored by Git in the code-only repository):
 - `execution_visual_calibration.json`: test-free representation selection.
 - `execution_predictions_gpu0.json`: adopted complete 7,915-step outputs.
 - `execution_analysis.json`: all execution intervals and audits.
+- `backbones/*.json`: complete MAI-UI, Qwen3.5, and GUI-Owl outputs.
+- `backbone_analysis.json`: their paired comparisons and parser audit.
 - `proactive_predictions.json` and `proactive_analysis.json`: all proactive
   predictions and locally reproducible metrics.
 - `proactive_rawmass_analysis.json`: frequency-normalization ablation.
@@ -330,6 +390,7 @@ Prediction files, indexes, and visual feature chunks are generated under
 `results/`.  They stay out of the code-only Git repository and can be
 regenerated with the commands in `trace_method/README.md`.
 
-All frozen-encoder compilation runs, including all 34,319 full-scope visual
-states, were executed on physical GPU 0.  Cosine matching and action transfer
-are deterministic CPU computation.
+All frozen-encoder compilation and full-backbone runs, including all 34,319
+full-scope visual states and 23,745 new-backbone test predictions, were
+executed on physical GPU 0.  Cosine matching and action transfer are
+deterministic CPU computation.

@@ -30,6 +30,7 @@ trace_method/
 ├── evaluate_rgb_ablation.py       RGB and controlled execution ablations
 ├── evaluate_execution.py          final Qwen-state execution evaluation
 ├── analyze_execution.py           complete execution analysis and audits
+├── analyze_backbones.py           complete-backbone and TRACE controls
 ├── build_proactive_index.py       official chronological proactive memory
 ├── evaluate_proactive.py          training-free proactive prediction
 ├── analyze_proactive.py           official metrics and uncertainty
@@ -99,6 +100,50 @@ predictions come from the upstream evaluator
 `../src/eval_execution/evaluation_qwen3vl.py`; HIM-Agent itself can be rerun
 with `../scripts/HIM_agent/eval_execution.sh`.
 
+### Complete additional backbones
+
+The continuous-batching evaluator uses the same ambiguous instructions,
+teacher-forced history, image budget, action parser, and 0–999 coordinate
+protocol for all three additional frozen models.  It refuses to run unless
+physical GPU 0 is the only visible CUDA device.  Set the model variables to
+local snapshot directories:
+
+```bash
+VLLM_PYTHON=python
+MAI_MODEL=/path/to/MAI-UI-8B/snapshot
+QWEN35_MODEL=/path/to/Qwen3.5-9B/snapshot
+OWL_MODEL=/path/to/GUI-Owl-1.5-8B-Instruct/snapshot
+
+CUDA_VISIBLE_DEVICES=0 VLLM_ENABLE_V1_MULTIPROCESSING=0 \
+VLLM_USE_FLASHINFER_SAMPLER=0 "$VLLM_PYTHON" \
+  src/eval_execution/evaluation_new_backbones_vllm.py \
+  --model-name MAI-UI-8B --model-path "$MAI_MODEL" --prompt-style qwen \
+  --history-root "$HISTORY_ROOT" --device cuda:0 --request-batch-size 256 \
+  --max-num-seqs 64 --max-new-tokens 256 \
+  --save-file trace_method/results/backbones/mai_ui_8b_gpu0.json
+
+CUDA_VISIBLE_DEVICES=0 VLLM_ENABLE_V1_MULTIPROCESSING=0 \
+VLLM_USE_FLASHINFER_SAMPLER=0 "$VLLM_PYTHON" \
+  src/eval_execution/evaluation_new_backbones_vllm.py \
+  --model-name Qwen3.5-9B --model-path "$QWEN35_MODEL" --prompt-style qwen \
+  --history-root "$HISTORY_ROOT" --device cuda:0 --request-batch-size 256 \
+  --max-num-seqs 64 --max-new-tokens 256 \
+  --save-file trace_method/results/backbones/qwen35_9b_gpu0.json
+
+CUDA_VISIBLE_DEVICES=0 VLLM_ENABLE_V1_MULTIPROCESSING=0 \
+VLLM_USE_FLASHINFER_SAMPLER=0 "$VLLM_PYTHON" \
+  src/eval_execution/evaluation_new_backbones_vllm.py \
+  --model-name GUI-Owl-1.5-8B-Instruct --model-path "$OWL_MODEL" \
+  --prompt-style owl --history-root "$HISTORY_ROOT" --device cuda:0 \
+  --request-batch-size 256 --max-num-seqs 64 --max-new-tokens 256 \
+  --save-file trace_method/results/backbones/gui_owl_1_5_8b_gpu0.json
+
+"$PYTHON_BIN" trace_method/analyze_backbones.py
+```
+
+Use `--resume` to continue any matching checkpoint.  The Transformers-only
+fallback is `../src/eval_execution/evaluation_new_backbones.py`.
+
 ## Proactive suggestion
 
 ```bash
@@ -126,6 +171,8 @@ HIM-Agent's proactive baseline remains available at
 - `results/execution_analysis.json`: metrics, intervals, ablations, and audits.
 - `results/execution_rgb_ablation_gpu0.json`: controlled execution ablations.
 - `results/execution_visual_calibration.json`: history-only Qwen layer choice.
+- `results/backbones/*.json`: complete additional-backbone predictions.
+- `results/backbone_analysis.json`: paired backbone and TRACE controls.
 - `results/proactive_predictions.json`: all 315 proactive predictions.
 - `results/proactive_analysis.json`: locally reproducible proactive metrics.
 

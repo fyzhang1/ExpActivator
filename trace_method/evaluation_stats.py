@@ -63,6 +63,7 @@ def paired_binary(
         samples.append(delta[indices].mean(1))
         remaining -= size
     bootstrap = np.concatenate(samples)
+    discordant = wins + losses
     return {
         "n": len(delta),
         "reference": float(reference.mean()),
@@ -72,7 +73,9 @@ def paired_binary(
         "wins": wins,
         "losses": losses,
         "ties": int(len(delta) - wins - losses),
-        "exact_mcnemar_p": float(binomtest(wins, wins + losses, 0.5).pvalue),
+        "exact_mcnemar_p": (
+            float(binomtest(wins, discordant, 0.5).pvalue) if discordant else 1.0
+        ),
     }
 
 
