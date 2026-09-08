@@ -1,14 +1,16 @@
-"""Extract frozen Qwen3-VL visual-state features for TRACE.
+"""Extract frozen backbone-specific visual-state features for TRACE.
 
 Two manifests are supported. ``calibration`` contains only historical
 pseudo-held-out trajectories and their earlier memories. ``full`` contains
 the released execution screenshots and the exact same top-5 historical pools
 used by TRACE.  Neither manifest opens target actions while selecting images.
 
-Each image stores normalized global means from three Qwen3-VL deep-stack
-layers plus the final visual layer, and four final-layer spatial quadrant
-means.  This permits test-free selection of a representation while keeping
-the visual model frozen.
+Each image stores normalized global means from visual layers 8, 16, and 24,
+plus the final visual layer and four final-layer spatial quadrant means.  For
+Qwen3-VL-family checkpoints, the architecture's native deep-stack mergers are
+used.  Qwen3.5 has no deep-stack mergers, so its native unmerged visual-token
+states are used instead.  This permits history-only representation selection
+for every backbone while keeping all model parameters frozen.
 """
 
 from __future__ import annotations
@@ -27,7 +29,7 @@ import torch
 import torch.nn.functional as F
 from PIL import Image
 from tqdm import tqdm
-from transformers import AutoProcessor, Qwen3VLForConditionalGeneration
+from transformers import AutoConfig, AutoModelForImageTextToText, AutoProcessor
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
@@ -42,6 +44,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo", default=str(REPO))
     parser.add_argument("--model-path", required=True)
+    parser.add_argument("--model-name", default=None)
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--history-root", default="data/Fingertip")
     parser.add_argument("--scope", choices=("calibration", "full"), required=True)
@@ -137,10 +140,85 @@ def normalized_mean(tokens: torch.Tensor) -> torch.Tensor:
     return F.normalize(tokens.float().mean(0), dim=0)
 
 
+class VisionFeatureAdapter:
+    """Expose comparable intermediate visual states across supported models."""
+
+    layer_indices = (8, 16, 24)
+
+    def __init__(self, vision: torch.nn.Module, model_type: str):
+        self.vision = vision
+        self.model_type = model_type
+        self.captures: dict[int, torch.Tensor] = {}
+        self.handles: list[torch.utils.hooks.RemovableHandle] = []
+        if model_type == "qwen3_5":
+            for layer_index in self.layer_indices:
+                self.handles.append(
+                    vision.blocks[layer_index].register_forward_hook(
+                        self._capture(layer_index)
+                    )
+                )
+
+    def _capture(self, layer_index: int):
+        def hook(
+            _module: torch.nn.Module,
+            _inputs: tuple[torch.Tensor, ...],
+            output: torch.Tensor,
+        ) -> None:
+            self.captures[layer_index] = output
+
+        return hook
+
+    @property
+    def readout(self) -> str:
+        if self.model_type == "qwen3_vl":
+            return "native deep-stack mergers at layers 8/16/24; final merger"
+        if self.model_type == "qwen3_5":
+            return "native unmerged visual-token states at layers 8/16/24/final"
+        raise ValueError(f"Unsupported model type: {self.model_type}")
+
+    def forward(
+        self, pixel_values: torch.Tensor, grids: torch.Tensor
+    ) -> tuple[list[torch.Tensor], torch.Tensor, list[int], list[tuple[int, int]]]:
+        self.captures.clear()
+        outputs = self.vision(pixel_values, grid_thw=grids)
+        merge = int(self.vision.spatial_merge_size)
+        if self.model_type == "qwen3_vl":
+            deep = outputs.deepstack_features
+            if deep is None or len(deep) != len(self.layer_indices):
+                raise ValueError(
+                    "Qwen3-VL checkpoint did not expose three deep-stack states"
+                )
+            final = outputs.pooler_output
+            split_sizes = (grids.prod(-1) // merge**2).tolist()
+            layouts = [(int(grid[1]) // merge, int(grid[2]) // merge) for grid in grids]
+            return list(deep), final, split_sizes, layouts
+        if self.model_type == "qwen3_5":
+            missing = set(self.layer_indices) - set(self.captures)
+            if missing:
+                raise ValueError(
+                    f"Qwen3.5 visual hooks missed layers: {sorted(missing)}"
+                )
+            final = outputs.last_hidden_state
+            split_sizes = grids.prod(-1).tolist()
+            layouts = [(int(grid[1]), int(grid[2])) for grid in grids]
+            return (
+                [self.captures[index] for index in self.layer_indices],
+                final,
+                split_sizes,
+                layouts,
+            )
+        raise ValueError(f"Unsupported model type: {self.model_type}")
+
+    def close(self) -> None:
+        for handle in self.handles:
+            handle.remove()
+        self.handles.clear()
+
+
 def extract_batch(
     paths: list[str],
     processor: AutoProcessor,
-    vision: torch.nn.Module,
+    adapter: VisionFeatureAdapter,
     device: str,
     pixels: int,
 ) -> tuple[torch.Tensor, torch.Tensor]:
@@ -155,12 +233,12 @@ def extract_batch(
         max_pixels=pixels,
     )
     grids = inputs.image_grid_thw.to(device)
+    vision = adapter.vision
     with torch.inference_mode():
-        final, deep = vision(
+        deep, final, split_sizes, layouts = adapter.forward(
             inputs.pixel_values.to(device=device, dtype=vision.dtype),
-            grid_thw=grids,
+            grids,
         )
-    split_sizes = (grids.prod(-1) // vision.spatial_merge_size**2).tolist()
     final_split = torch.split(final, split_sizes)
     deep_split = [torch.split(layer, split_sizes) for layer in deep]
 
@@ -172,9 +250,7 @@ def extract_batch(
         ] + [normalized_mean(tokens)]
         global_rows.append(torch.stack(globals_for_image))
 
-        _, grid_h, grid_w = [int(value) for value in grids[image_index].tolist()]
-        height = grid_h // vision.spatial_merge_size
-        width = grid_w // vision.spatial_merge_size
+        height, width = layouts[image_index]
         layout = tokens.reshape(height, width, -1)
         row_slices = (slice(0, max(height // 2, 1)), slice(height // 2, height))
         col_slices = (slice(0, max(width // 2, 1)), slice(width // 2, width))
@@ -190,8 +266,30 @@ def extract_batch(
     )
 
 
+def validate_gpu(device: str) -> None:
+    if os.environ.get("CUDA_VISIBLE_DEVICES") != "0":
+        raise RuntimeError(
+            "Set CUDA_VISIBLE_DEVICES=0; visual extraction may use only GPU 0"
+        )
+    if device != "cuda:0":
+        raise ValueError("--device must be cuda:0")
+    if not torch.cuda.is_available() or torch.cuda.device_count() != 1:
+        raise RuntimeError(
+            "Exactly one visible CUDA device (physical GPU 0) is required"
+        )
+
+
+def feature_readout(model_type: str) -> str:
+    if model_type == "qwen3_vl":
+        return "native deep-stack mergers at layers 8/16/24; final merger"
+    if model_type == "qwen3_5":
+        return "native unmerged visual-token states at layers 8/16/24/final"
+    raise ValueError(f"Unsupported model type: {model_type}")
+
+
 def main() -> None:
     args = parse_args()
+    validate_gpu(args.device)
     repo = Path(args.repo).resolve()
     output_dir = repo / (
         args.output_dir or f"trace_method/results/cache/visual_{args.scope}"
@@ -199,14 +297,35 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     manifest_path = output_dir / "manifest.json"
     paths = build_manifest(args)
+    model_path = Path(args.model_path).resolve()
+    config = AutoConfig.from_pretrained(model_path, local_files_only=True)
+    model_type = str(config.model_type)
     manifest = {
         "protocol": (
-            "frozen Qwen3-VL visual tower; no target action used to choose images; "
-            "normalized deep-stack/final global means and final spatial quadrants"
+            "frozen model-specific visual tower; no target action used to choose "
+            "images; normalized intermediate/final global means and final spatial "
+            "quadrants"
         ),
         "scope": args.scope,
-        "model_path": str(args.model_path),
+        "model_name": args.model_name or model_path.name,
+        "model_path": str(model_path),
+        "model_revision": model_path.name,
+        "model_type": model_type,
+        "feature_readout": feature_readout(model_type),
+        "feature_modes": [
+            "deep8",
+            "deep16",
+            "deep24",
+            "final",
+            "deep_mean",
+            "spatial",
+            "pyramid",
+            "deep_pyramid",
+        ],
         "device": args.device,
+        "physical_gpu": 0,
+        "visible_cuda_devices": os.environ["CUDA_VISIBLE_DEVICES"],
+        "gpu_name": torch.cuda.get_device_name(0),
         "pixels": args.pixels,
         "trajectory_top_k": args.trajectory_top_k,
         "paths": paths,
@@ -215,8 +334,18 @@ def main() -> None:
     }
     if manifest_path.exists():
         previous = json.loads(manifest_path.read_text())
-        if previous["paths"] != paths or previous["pixels"] != args.pixels:
-            raise ValueError("Existing visual manifest does not match this run")
+        compared = (
+            "paths",
+            "scope",
+            "model_path",
+            "model_type",
+            "feature_readout",
+            "pixels",
+            "trajectory_top_k",
+        )
+        mismatches = [key for key in compared if previous.get(key) != manifest[key]]
+        if mismatches:
+            raise ValueError(f"Existing visual manifest mismatch: {mismatches}")
     else:
         manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2))
 
@@ -231,14 +360,18 @@ def main() -> None:
         return
 
     processor = AutoProcessor.from_pretrained(args.model_path, local_files_only=True)
-    model = Qwen3VLForConditionalGeneration.from_pretrained(
-        args.model_path,
+    model = AutoModelForImageTextToText.from_pretrained(
+        model_path,
         dtype=torch.bfloat16,
         device_map={"": args.device},
         attn_implementation="sdpa",
         local_files_only=True,
     ).eval()
     vision = model.model.visual
+    adapter = VisionFeatureAdapter(vision, model_type)
+    if adapter.readout != manifest["feature_readout"]:
+        raise ValueError("Loaded visual adapter does not match its manifest")
+
     del model.model.language_model
     del model.lm_head
     gc.collect()
@@ -256,7 +389,7 @@ def main() -> None:
         ):
             batch_paths = chunk_paths[offset : offset + args.batch_size]
             global_features, spatial_features = extract_batch(
-                batch_paths, processor, vision, args.device, args.pixels
+                batch_paths, processor, adapter, args.device, args.pixels
             )
             global_parts.append(global_features)
             spatial_parts.append(spatial_features)
@@ -271,6 +404,7 @@ def main() -> None:
             output_dir / f"chunk_{chunk:04d}.pt",
         )
         print(f"saved visual chunk {chunk + 1}/{total_chunks}", flush=True)
+    adapter.close()
 
 
 if __name__ == "__main__":

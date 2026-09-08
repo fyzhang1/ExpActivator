@@ -1,4 +1,4 @@
-"""Choose a frozen Qwen3-VL state representation on histories only."""
+"""Choose a frozen backbone-specific state representation on histories only."""
 
 from __future__ import annotations
 
@@ -39,7 +39,9 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def load_features(directory: Path) -> dict[str, tuple[np.ndarray, np.ndarray]]:
+def load_features(
+    directory: Path,
+) -> tuple[dict[str, tuple[np.ndarray, np.ndarray]], dict]:
     manifest = json.loads((directory / "manifest.json").read_text())
     result = {}
     for chunk_path in sorted(directory.glob("chunk_*.pt")):
@@ -50,7 +52,7 @@ def load_features(directory: Path) -> dict[str, tuple[np.ndarray, np.ndarray]]:
             result[path] = (global_features[index], spatial_features[index])
     if len(result) != len(manifest["paths"]):
         raise ValueError(f"Incomplete cache: {len(result)} != {len(manifest['paths'])}")
-    return result
+    return result, manifest
 
 
 @lru_cache(maxsize=20_000)
@@ -126,7 +128,11 @@ def main() -> None:
         repo / args.text_cache, map_location="cpu", weights_only=False
     )
     keys = text_cache["residual_keys"].float()
-    features = load_features(repo / args.visual_dir)
+    features, visual_manifest = load_features(repo / args.visual_dir)
+    if visual_manifest.get("scope") != "calibration":
+        raise ValueError("Visual calibration requires a calibration-scope cache")
+    if visual_manifest.get("test_answers_accessed") is not False:
+        raise ValueError("Visual feature construction must not access test answers")
 
     cases = []
     memory_paths: set[str] = set()
@@ -242,6 +248,10 @@ def main() -> None:
 
     accuracy = {name: value / len(cases) for name, value in hits.items()}
     selected = min(mode_names, key=lambda name: (-accuracy[name], name))
+    selected_base, selected_suffix = selected.rsplit("_", 1)
+    selected_center = (
+        centers[selected_base].tolist() if selected_suffix == "centered" else None
+    )
     result = {
         "protocol": (
             "training histories only; final readable trajectory per user held out; "
@@ -253,6 +263,7 @@ def main() -> None:
         "accuracy": accuracy,
         "paired_vs_rgb": paired,
         "selected_mode": selected,
+        "selected_center": selected_center,
         "selected_delta_vs_rgb": accuracy[selected] - accuracy["rgb_mse"],
         "selected_exact_mcnemar_p": float(
             binomtest(
@@ -261,11 +272,36 @@ def main() -> None:
                 0.5,
             ).pvalue
         ),
+        "visual_model": {
+            key: visual_manifest.get(key)
+            for key in (
+                "model_name",
+                "model_path",
+                "model_revision",
+                "model_type",
+                "feature_readout",
+                "pixels",
+            )
+        },
     }
     output = repo / args.output
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(result, indent=2))
-    print(json.dumps(result, indent=2))
+    print(
+        json.dumps(
+            {
+                "visual_model": result["visual_model"],
+                "validation_actions": result["validation_actions"],
+                "selected_mode": selected,
+                "selected_accuracy": accuracy[selected],
+                "rgb_mse_accuracy": accuracy["rgb_mse"],
+                "selected_delta_vs_rgb": result["selected_delta_vs_rgb"],
+                "selected_exact_mcnemar_p": result["selected_exact_mcnemar_p"],
+            },
+            indent=2,
+        )
+    )
+    print(f"saved {output}")
 
 
 if __name__ == "__main__":

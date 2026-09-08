@@ -1,4 +1,4 @@
-"""Compare complete GUI-backbone runs and isolate TRACE's app front-end."""
+"""Compare complete GUI backbones with full backbone-specific TRACE runs."""
 
 from __future__ import annotations
 
@@ -7,6 +7,7 @@ import hashlib
 import json
 import sys
 from collections import Counter
+from itertools import combinations
 from pathlib import Path
 
 import numpy as np
@@ -25,9 +26,12 @@ from trace_method.evaluation_stats import (
 DEFAULT_MODELS = {
     "mai_ui_8b": "trace_method/results/backbones/mai_ui_8b_gpu0.json",
     "qwen35_9b": "trace_method/results/backbones/qwen35_9b_gpu0.json",
-    "gui_owl_1_5_8b": (
-        "trace_method/results/backbones/gui_owl_1_5_8b_gpu0.json"
-    ),
+    "gui_owl_1_5_8b": ("trace_method/results/backbones/gui_owl_1_5_8b_gpu0.json"),
+}
+
+DEFAULT_TRACES = {
+    name: path.replace("_gpu0.json", "_trace_gpu0.json")
+    for name, path in DEFAULT_MODELS.items()
 }
 
 
@@ -53,6 +57,9 @@ def parse_args() -> argparse.Namespace:
     )
     for name, default in DEFAULT_MODELS.items():
         parser.add_argument(f"--{name.replace('_', '-')}", default=default)
+        parser.add_argument(
+            f"--{name.replace('_', '-')}-trace", default=DEFAULT_TRACES[name]
+        )
     return parser.parse_args()
 
 
@@ -139,17 +146,14 @@ def main() -> None:
     validate_order("trace", trace, expected)
 
     app_index = json.loads((REPO / args.app_index).read_text())
-    app_names = dict(
-        zip(app_index["episode_ids"], app_index["factorized_app_names"])
-    )
+    app_names = dict(zip(app_index["episode_ids"], app_index["factorized_app_names"]))
     if set(app_names) != {row["id"].rsplit("_", 1)[0] for row in test}:
         raise ValueError("TRACE app index does not cover the official episodes exactly")
 
-    model_paths = {
-        name: Path(getattr(args, name)) for name in DEFAULT_MODELS
-    }
+    model_paths = {name: Path(getattr(args, name)) for name in DEFAULT_MODELS}
     raw_models: dict[str, list[dict]] = {}
     augmented_models: dict[str, list[dict]] = {}
+    trace_models: dict[str, list[dict]] = {}
     protocols = {
         "qwen3_vl_baseline": baseline_protocol,
         "trace": trace_protocol,
@@ -185,6 +189,35 @@ def main() -> None:
             "physical_gpu": protocol["physical_gpu"],
             "visible_cuda_devices": protocol["visible_cuda_devices"],
         }
+        trace_protocol, trace_rows = load_result(
+            REPO / Path(getattr(args, f"{name}_trace"))
+        )
+        validate_order(f"{name}_trace", trace_rows, expected)
+        if trace_protocol.get("test_answers_used_for_prediction") is not False:
+            raise ValueError(f"{name} TRACE run used target answers for prediction")
+        if trace_protocol.get("test_sha256") != test_sha256:
+            raise ValueError(f"{name} TRACE run used a different execution test")
+        if trace_protocol.get("exact_exclusion_violations") != 0:
+            raise ValueError(f"{name} TRACE run violated exact-episode exclusion")
+        if trace_protocol.get("physical_gpu_for_feature_extraction") != 0:
+            raise ValueError(f"{name} TRACE features were not built on GPU 0")
+        if trace_protocol.get("visible_cuda_devices_for_feature_extraction") != "0":
+            raise ValueError(f"{name} TRACE feature extraction exposed another GPU")
+        if trace_protocol.get("visual_model_revision") != protocol.get(
+            "model_revision"
+        ):
+            raise ValueError(f"{name} raw and TRACE model revisions differ")
+        trace_models[name] = trace_rows
+        protocols[f"{name}_trace"] = trace_protocol
+        integrity[f"{name}_trace"] = {
+            "n_steps": len(trace_rows),
+            "unique_step_ids": len({row["episode_id"] for row in trace_rows}),
+            "official_order": True,
+            "test_answers_used_for_prediction": False,
+            "exact_exclusion_violations": 0,
+            "physical_gpu_for_feature_extraction": 0,
+            "visible_cuda_devices_for_feature_extraction": "0",
+        }
 
     all_metrics = {
         "qwen3_vl_baseline": metrics(baseline),
@@ -193,6 +226,7 @@ def main() -> None:
     for name, rows in raw_models.items():
         all_metrics[name] = metrics(rows)
         all_metrics[f"{name}_plus_trace_app"] = metrics(augmented_models[name])
+        all_metrics[f"{name}_plus_trace"] = metrics(trace_models[name])
 
     rng = np.random.default_rng(args.seed)
     comparisons = {}
@@ -215,6 +249,22 @@ def main() -> None:
                 rng,
                 args.bootstrap_samples,
             ),
+            "full_trace_vs_raw": compare(
+                rows,
+                trace_models[name],
+                starts,
+                nonfirst,
+                rng,
+                args.bootstrap_samples,
+            ),
+            "full_trace_vs_trace_app_only": compare(
+                augmented,
+                trace_models[name],
+                starts,
+                nonfirst,
+                rng,
+                args.bootstrap_samples,
+            ),
             "trace_vs_raw": compare(
                 rows,
                 trace,
@@ -231,8 +281,30 @@ def main() -> None:
                 rng,
                 args.bootstrap_samples,
             ),
+            "fixed_qwen_trace_vs_backbone_trace": compare(
+                trace_models[name],
+                trace,
+                starts,
+                nonfirst,
+                rng,
+                args.bootstrap_samples,
+            ),
             "trace_vs_raw_action_breakdown": action_breakdown(test, rows, trace),
+            "backbone_trace_vs_raw_action_breakdown": action_breakdown(
+                test, rows, trace_models[name]
+            ),
         }
+
+    trace_pairwise = {}
+    for reference_name, method_name in combinations(trace_models, 2):
+        trace_pairwise[f"{method_name}_vs_{reference_name}"] = compare(
+            trace_models[reference_name],
+            trace_models[method_name],
+            starts,
+            nonfirst,
+            rng,
+            args.bootstrap_samples,
+        )
 
     metric_names = (
         "type_accuracy",
@@ -263,6 +335,11 @@ def main() -> None:
                 "replace only each model's first action with the fixed, "
                 "history-derived TRACE app prediction"
             ),
+            "full_backbone_trace": (
+                "TRACE omission-aware app selection, goal-restricted trajectory "
+                "memory, and state synchronization using each backbone's own "
+                "frozen visual representation selected on histories only"
+            ),
             "bootstrap_samples": args.bootstrap_samples,
             "seed": args.seed,
         },
@@ -271,6 +348,7 @@ def main() -> None:
         "integrity": integrity,
         "parse_quality": parse_quality,
         "comparisons": comparisons,
+        "full_trace_pairwise": trace_pairwise,
         "source_protocols": protocols,
     }
     destination = REPO / args.output

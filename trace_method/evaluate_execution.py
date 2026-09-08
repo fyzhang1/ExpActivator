@@ -1,4 +1,4 @@
-"""Evaluate TRACE with the history-selected frozen Qwen3-VL state embedding.
+"""Evaluate TRACE with a history-selected frozen visual state embedding.
 
 The visual representation is chosen exclusively by ``calibrate_visual.py`` on
 pseudo-held-out training trajectories.
@@ -10,6 +10,7 @@ execution split.  No model parameter is fitted or updated.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from functools import lru_cache
@@ -61,18 +62,48 @@ def parse_args() -> argparse.Namespace:
 
 
 def load_selected_features(
-    directory: Path, selected_mode: str
+    directory: Path,
+    selected_mode: str,
+    selected_center: list[list[float]] | None,
 ) -> tuple[dict[str, np.ndarray], dict]:
-    """Load only the selected global block; formal adoption requires deep8_raw."""
+    """Load the history-selected block-cosine descriptor from a full cache."""
     manifest = json.loads((directory / "manifest.json").read_text())
-    if selected_mode != "deep8_raw":
-        raise ValueError(
-            f"Formal evaluator currently supports history-selected deep8_raw, got {selected_mode}"
-        )
+    base_mode, suffix = selected_mode.rsplit("_", 1)
+    center = (
+        np.asarray(selected_center, dtype=np.float32)
+        if selected_center is not None
+        else None
+    )
+    if (suffix == "centered") != (center is not None):
+        raise ValueError("Selected visual mode and saved center are inconsistent")
     result: dict[str, np.ndarray] = {}
     for chunk_path in sorted(directory.glob("chunk_*.pt")):
         chunk = torch.load(chunk_path, map_location="cpu", weights_only=False)
-        values = chunk["global_features"][:, 0, :].float().numpy()
+        global_features = chunk["global_features"].float().numpy()
+        spatial_features = chunk["spatial_features"].float().numpy()
+        if base_mode == "deep8":
+            values = global_features[:, 0:1]
+        elif base_mode == "deep16":
+            values = global_features[:, 1:2]
+        elif base_mode == "deep24":
+            values = global_features[:, 2:3]
+        elif base_mode == "final":
+            values = global_features[:, 3:4]
+        elif base_mode == "deep_mean":
+            values = global_features
+        elif base_mode == "spatial":
+            values = spatial_features
+        elif base_mode == "pyramid":
+            values = np.concatenate([global_features[:, 3:4], spatial_features], axis=1)
+        elif base_mode == "deep_pyramid":
+            values = np.concatenate([global_features, spatial_features], axis=1)
+        else:
+            raise ValueError(f"Unknown selected visual mode: {selected_mode}")
+        if center is not None:
+            values = values - center[None, ...]
+            norms = np.linalg.norm(values, axis=-1, keepdims=True)
+            values = values / np.maximum(norms, 1e-12)
+        values = values.reshape(values.shape[0], -1) / np.sqrt(values.shape[1])
         for row, path in enumerate(chunk["paths"]):
             result[str(path)] = values[row]
     if len(result) != len(manifest["paths"]):
@@ -95,11 +126,23 @@ def main() -> None:
         raise ValueError("Representation calibration must be history-only")
     selected_mode = str(calibration["selected_mode"])
     features, visual_manifest = load_selected_features(
-        repo / args.visual_dir, selected_mode
+        repo / args.visual_dir,
+        selected_mode,
+        calibration.get("selected_center"),
     )
+    if visual_manifest.get("scope") != "full":
+        raise ValueError("TRACE execution requires a full-scope visual cache")
+    if visual_manifest.get("test_answers_accessed") is not False:
+        raise ValueError("Visual feature construction must not access test answers")
+    calibrated_model = calibration.get("visual_model", {})
+    if calibrated_model:
+        for key in ("model_path", "model_type", "feature_readout", "pixels"):
+            if calibrated_model.get(key) != visual_manifest.get(key):
+                raise ValueError(f"Calibration/full visual model mismatch: {key}")
 
     train = pd.read_csv(repo / "samples/train_set.csv").reset_index(drop=True)
-    test = json.loads((repo / args.test_path).read_text())
+    test_path = repo / args.test_path
+    test = json.loads(test_path.read_text())
     index = json.loads((repo / args.index).read_text())
     baseline = load_outputs(repo / args.baseline)
     if [row["episode_id"] for row in baseline] != [row["id"] for row in test]:
@@ -181,14 +224,32 @@ def main() -> None:
 
     result = {
         "protocol": {
-            "name": "TRACE with frozen Qwen3-VL visual state synchronization",
-            "training": "none; Qwen3-VL and all other encoders frozen",
+            "name": (
+                "TRACE with frozen "
+                f"{visual_manifest['model_name']} visual state synchronization"
+            ),
+            "training": "none; visual backbone and all other encoders frozen",
             "representation_selection": "history-only pseudo-held-out trajectories",
             "selected_mode": selected_mode,
             "calibration_delta_vs_rgb": calibration["selected_delta_vs_rgb"],
             "trajectory_top_k": args.trajectory_top_k,
-            "state_similarity": "cosine similarity of frozen Qwen3-VL layer-8 global visual means",
+            "state_similarity": (
+                "mean block cosine similarity of the history-selected frozen "
+                "visual representation"
+            ),
+            "visual_model_name": visual_manifest["model_name"],
+            "visual_model_path": visual_manifest["model_path"],
+            "visual_model_revision": visual_manifest["model_revision"],
+            "visual_model_type": visual_manifest["model_type"],
+            "feature_readout": visual_manifest["feature_readout"],
             "pixels": visual_manifest["pixels"],
+            "n_steps": len(test),
+            "n_episodes": len(episode_ids),
+            "test_sha256": hashlib.sha256(test_path.read_bytes()).hexdigest(),
+            "physical_gpu_for_feature_extraction": visual_manifest["physical_gpu"],
+            "visible_cuda_devices_for_feature_extraction": visual_manifest[
+                "visible_cuda_devices"
+            ],
             "exact_train_episode_excluded_from_trajectory_memory": True,
             "exact_exclusion_violations": exact_exclusion_violations,
             "test_answers_used_for_prediction": False,

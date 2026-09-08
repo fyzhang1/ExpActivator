@@ -9,7 +9,8 @@ TRACE combines:
 
 1. omission-aware residual-goal voting for the personalized first app action;
 2. goal-restricted same-user trajectory memory; and
-3. current-screen synchronization with a frozen Qwen3-VL layer-8 visual state.
+3. current-screen synchronization with a history-selected visual state from
+   the frozen GUI backbone under evaluation.
 
 It fits no model or prediction parameter.  The complete execution result covers
 775 episodes and 7,915 actions; proactive evaluation covers 215 positive and
@@ -25,10 +26,10 @@ trace_method/
 ├── compile_history_app_labels.py  frozen training-side app compilation
 ├── build_execution_index.py       omission-aware history index and app vote
 ├── calibrate_execution.py         history-only k calibration
-├── build_visual_index.py          frozen Qwen visual feature compiler
+├── build_visual_index.py          frozen backbone visual feature compiler
 ├── calibrate_visual.py            history-only visual representation selection
 ├── evaluate_rgb_ablation.py       RGB and controlled execution ablations
-├── evaluate_execution.py          final Qwen-state execution evaluation
+├── evaluate_execution.py          selected-state execution evaluation
 ├── analyze_execution.py           complete execution analysis and audits
 ├── analyze_backbones.py           complete-backbone and TRACE controls
 ├── build_proactive_index.py       official chronological proactive memory
@@ -137,12 +138,56 @@ VLLM_USE_FLASHINFER_SAMPLER=0 "$VLLM_PYTHON" \
   --prompt-style owl --history-root "$HISTORY_ROOT" --device cuda:0 \
   --request-batch-size 256 --max-num-seqs 64 --max-new-tokens 256 \
   --save-file trace_method/results/backbones/gui_owl_1_5_8b_gpu0.json
-
-"$PYTHON_BIN" trace_method/analyze_backbones.py
 ```
 
 Use `--resume` to continue any matching checkpoint.  The Transformers-only
 fallback is `../src/eval_execution/evaluation_new_backbones.py`.
+
+The raw runs above are controls, not the full TRACE integration.  The commands
+below calibrate a representation separately for each backbone on the same 756
+held-out historical actions, compile that backbone's full visual cache, and
+run TRACE on all 7,915 test steps.  The first action uses omission-aware app
+selection; all 7,140 later actions use that model's own visual latent for
+trajectory-state synchronization.
+
+```bash
+run_backbone_trace () {
+  KEY="$1"
+  NAME="$2"
+  MODEL="$3"
+  CACHE_ROOT="trace_method/results/cache/backbone_trace/$KEY"
+  CALIBRATION="trace_method/results/backbones/${KEY}_trace_calibration.json"
+  OUTPUT="trace_method/results/backbones/${KEY}_trace_gpu0.json"
+
+  CUDA_VISIBLE_DEVICES=0 "$PYTHON_BIN" trace_method/build_visual_index.py \
+    --model-path "$MODEL" --model-name "$NAME" --device cuda:0 \
+    --scope calibration --history-root "$HISTORY_ROOT" \
+    --batch-size 24 --pixels 200704 \
+    --output-dir "$CACHE_ROOT/calibration"
+  "$PYTHON_BIN" trace_method/calibrate_visual.py \
+    --history-root "$HISTORY_ROOT" \
+    --visual-dir "$CACHE_ROOT/calibration" --output "$CALIBRATION"
+  CUDA_VISIBLE_DEVICES=0 "$PYTHON_BIN" trace_method/build_visual_index.py \
+    --model-path "$MODEL" --model-name "$NAME" --device cuda:0 \
+    --scope full --history-root "$HISTORY_ROOT" \
+    --batch-size 24 --pixels 200704 --output-dir "$CACHE_ROOT/full"
+  "$PYTHON_BIN" trace_method/evaluate_execution.py \
+    --history-root "$HISTORY_ROOT" --calibration "$CALIBRATION" \
+    --visual-dir "$CACHE_ROOT/full" --output "$OUTPUT"
+}
+
+run_backbone_trace mai_ui_8b MAI-UI-8B "$MAI_MODEL"
+run_backbone_trace qwen35_9b Qwen3.5-9B "$QWEN35_MODEL"
+run_backbone_trace gui_owl_1_5_8b GUI-Owl-1.5-8B-Instruct "$OWL_MODEL"
+
+"$PYTHON_BIN" trace_method/analyze_backbones.py
+```
+
+Existing chunks are resumed only when their manifest matches the requested
+model, revision, scope, image list, pixel budget, and representation readout.
+Qwen3-VL-family backbones use their native merged deep-stack states; Qwen3.5
+uses hooked native unmerged visual-token states because it has no deep-stack
+mergers.  Calibration and full-cache manifests must match before evaluation.
 
 ## Proactive suggestion
 
@@ -171,7 +216,11 @@ HIM-Agent's proactive baseline remains available at
 - `results/execution_analysis.json`: metrics, intervals, ablations, and audits.
 - `results/execution_rgb_ablation_gpu0.json`: controlled execution ablations.
 - `results/execution_visual_calibration.json`: history-only Qwen layer choice.
-- `results/backbones/*.json`: complete additional-backbone predictions.
+- `results/backbones/*_gpu0.json`: complete raw-backbone predictions.
+- `results/backbones/*_trace_calibration.json`: history-only representation
+  selection for each frozen backbone.
+- `results/backbones/*_trace_gpu0.json`: complete backbone-specific TRACE
+  predictions.
 - `results/backbone_analysis.json`: paired backbone and TRACE controls.
 - `results/proactive_predictions.json`: all 315 proactive predictions.
 - `results/proactive_analysis.json`: locally reproducible proactive metrics.
