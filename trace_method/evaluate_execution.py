@@ -1,0 +1,210 @@
+"""Evaluate TRACE with the history-selected frozen Qwen3-VL state embedding.
+
+The visual representation is chosen exclusively by ``calibrate_visual.py`` on
+pseudo-held-out training trajectories.
+This script fixes that choice, performs current-screen synchronization with
+cosine similarity, and scores the resulting actions on the complete released
+execution split.  No model parameter is fitted or updated.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from functools import lru_cache
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import torch
+from PIL import Image
+
+REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO))
+
+from trace_method.execution_core import (
+    historical_action_to_qwen,
+    load_history_trajectories,
+    load_outputs,
+    resolve_test_image,
+    scored_row,
+    summarize,
+)
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--repo", default=str(REPO))
+    parser.add_argument(
+        "--index", default="trace_method/results/execution_app_predictions_gpu0.json"
+    )
+    parser.add_argument(
+        "--calibration",
+        default="trace_method/results/execution_visual_calibration.json",
+    )
+    parser.add_argument(
+        "--visual-dir", default="trace_method/results/cache/visual_full"
+    )
+    parser.add_argument(
+        "--test-path", default="data/personal_execution/personal_execution.json"
+    )
+    parser.add_argument(
+        "--baseline", default="trace_method/results/execution_baseline_gpu0.json"
+    )
+    parser.add_argument("--history-root", default="data/Fingertip")
+    parser.add_argument("--trajectory-top-k", type=int, default=5)
+    parser.add_argument(
+        "--output", default="trace_method/results/execution_predictions_gpu0.json"
+    )
+    return parser.parse_args()
+
+
+def load_selected_features(
+    directory: Path, selected_mode: str
+) -> tuple[dict[str, np.ndarray], dict]:
+    """Load only the selected global block; formal adoption requires deep8_raw."""
+    manifest = json.loads((directory / "manifest.json").read_text())
+    if selected_mode != "deep8_raw":
+        raise ValueError(
+            f"Formal evaluator currently supports history-selected deep8_raw, got {selected_mode}"
+        )
+    result: dict[str, np.ndarray] = {}
+    for chunk_path in sorted(directory.glob("chunk_*.pt")):
+        chunk = torch.load(chunk_path, map_location="cpu", weights_only=False)
+        values = chunk["global_features"][:, 0, :].float().numpy()
+        for row, path in enumerate(chunk["paths"]):
+            result[str(path)] = values[row]
+    if len(result) != len(manifest["paths"]):
+        raise ValueError(f"Incomplete cache: {len(result)} != {len(manifest['paths'])}")
+    return result, manifest
+
+
+@lru_cache(maxsize=100_000)
+def image_size(path: str) -> tuple[int, int]:
+    with Image.open(path) as image:
+        return image.size
+
+
+def main() -> None:
+    args = parse_args()
+    repo = Path(args.repo).resolve()
+    history_root = Path(args.history_root).resolve()
+    calibration = json.loads((repo / args.calibration).read_text())
+    if calibration.get("test_data_accessed") is not False:
+        raise ValueError("Representation calibration must be history-only")
+    selected_mode = str(calibration["selected_mode"])
+    features, visual_manifest = load_selected_features(
+        repo / args.visual_dir, selected_mode
+    )
+
+    train = pd.read_csv(repo / "samples/train_set.csv").reset_index(drop=True)
+    test = json.loads((repo / args.test_path).read_text())
+    index = json.loads((repo / args.index).read_text())
+    baseline = load_outputs(repo / args.baseline)
+    if [row["episode_id"] for row in baseline] != [row["id"] for row in test]:
+        raise ValueError("Baseline and official test order differ")
+
+    episode_ids = index["episode_ids"]
+    if len(episode_ids) != 775 or len(set(episode_ids)) != 775:
+        raise ValueError("History index must contain all 775 unique episodes")
+    index_row = {episode_id: row for row, episode_id in enumerate(episode_ids)}
+    trajectories = load_history_trajectories(train, history_root)
+
+    # Construct the same top-5 goal-restricted historical pools as RGB TRACE.
+    # Target answers are not read during pool construction or state selection.
+    pools: dict[str, tuple[np.ndarray, list[tuple[str, int, str]]]] = {}
+    exact_exclusion_violations = 0
+    for episode_id in episode_ids:
+        query_index = index_row[episode_id]
+        user, time = episode_id.split("_", 1)
+        selected = []
+        for train_index in index["factorized_neighbors"][query_index]:
+            source = train.iloc[int(train_index)]
+            if int(source.user_id) == int(user) and str(source.time) == time:
+                continue
+            if not trajectories[int(train_index)]:
+                continue
+            selected.append(int(train_index))
+            if len(selected) == args.trajectory_top_k:
+                break
+        states = []
+        for train_index in selected:
+            source = train.iloc[train_index]
+            if int(source.user_id) == int(user) and str(source.time) == time:
+                exact_exclusion_violations += 1
+            for path, action in trajectories[train_index]:
+                if str(path) in features:
+                    states.append((features[str(path)], action, train_index, str(path)))
+        if not states:
+            raise ValueError(f"No cached historical state for {episode_id}")
+        pools[episode_id] = (
+            np.stack([state[0] for state in states]),
+            [(state[1], state[2], state[3]) for state in states],
+        )
+
+    outputs = []
+    for step_number, step in enumerate(test, start=1):
+        episode_id = step["id"].rsplit("_", 1)[0]
+        position = int(step["id"].rsplit("_", 1)[1])
+        query_index = index_row[episode_id]
+        current_path = str(resolve_test_image(step["img_path"], history_root))
+        width, height = image_size(current_path)
+
+        if position == 0:
+            output = {
+                "action": "open_app",
+                "app_name": index["factorized_app_names"][query_index],
+            }
+            source_metadata = None
+        else:
+            query = features[current_path]
+            candidate_matrix, states = pools[episode_id]
+            source_index = int(np.argmax(candidate_matrix @ query))
+            action, train_index, source_path = states[source_index]
+            historical_size = image_size(source_path)
+            output = historical_action_to_qwen(action, historical_size)
+            source = train.iloc[train_index]
+            source_metadata = {
+                "train_row_index": train_index,
+                "user_id": int(source.user_id),
+                "time": str(source.time),
+                "image_path": source_path,
+                "visual_similarity": float(candidate_matrix[source_index] @ query),
+            }
+
+        row = scored_row(step, output, width, height)
+        row["memory_source"] = source_metadata
+        outputs.append(row)
+        if step_number % 500 == 0:
+            print(f"predicted {step_number}/{len(test)}", flush=True)
+
+    result = {
+        "protocol": {
+            "name": "TRACE with frozen Qwen3-VL visual state synchronization",
+            "training": "none; Qwen3-VL and all other encoders frozen",
+            "representation_selection": "history-only pseudo-held-out trajectories",
+            "selected_mode": selected_mode,
+            "calibration_delta_vs_rgb": calibration["selected_delta_vs_rgb"],
+            "trajectory_top_k": args.trajectory_top_k,
+            "state_similarity": "cosine similarity of frozen Qwen3-VL layer-8 global visual means",
+            "pixels": visual_manifest["pixels"],
+            "exact_train_episode_excluded_from_trajectory_memory": True,
+            "exact_exclusion_violations": exact_exclusion_violations,
+            "test_answers_used_for_prediction": False,
+        },
+        "metrics": {
+            "paired_baseline": summarize(baseline),
+            "trace": summarize(outputs),
+        },
+        "outputs": outputs,
+    }
+    destination = repo / args.output
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(json.dumps(result, ensure_ascii=False, indent=2))
+    print(json.dumps(result["metrics"], ensure_ascii=False, indent=2))
+    print(f"saved {destination}")
+
+
+if __name__ == "__main__":
+    main()

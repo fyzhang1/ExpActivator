@@ -1,5 +1,17 @@
 notebook/
 results/
+!trace_method/results/
+!trace_method/results/.gitignore
+!trace_method/results/*.md
 __pycache__/
+.ruff_cache/
 *.ipynb
 *.pyc
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+/datasets/
+/models/
+/checkpoints/
+/outputs/

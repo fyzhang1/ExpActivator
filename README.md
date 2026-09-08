@@ -75,6 +75,13 @@ sh scripts/HIM_agent/eval_execution.sh
 sh scripts/HIM_agent/eval_proactive.sh
 ```
 
+**Evaluate TRACE (training-free long-horizon personalization)**
+
+The cleaned implementation, complete result report, ablations, and
+reproducibility commands are in
+[trace_method/README.md](trace_method/README.md). The original HIM-Agent
+implementation and evaluation scripts above are retained as the baseline.
+
 Note: To prevent the agent from returning non-standard JSON that might interfere with API calls, we  inference-first and then evaluation. Specifically, results are saved and then calculated using `scripts/proactive/calculate.sh`
 
 
