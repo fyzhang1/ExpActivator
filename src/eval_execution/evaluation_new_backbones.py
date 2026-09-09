@@ -29,7 +29,14 @@ from transformers import AutoModelForImageTextToText, AutoProcessor
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src/eval_execution"))
 
-from prompt import OWL_PROMPT, OWL_USER_QUERY, QWEN3_USER_PROMPT, QWEN3VL_SYSTEM_PROMPT
+from prompt import (
+    OWL_PROMPT,
+    OWL_USER_QUERY,
+    OWL_USER_QUERY_RECORD,
+    QWEN3_USER_PROMPT,
+    QWEN3_USER_PROMPT_GENERALIZED,
+    QWEN3VL_SYSTEM_PROMPT,
+)
 
 from utils import convert_action_json, convert_action_qwen, convert_format
 
@@ -146,9 +153,9 @@ def expression_action(text: str) -> dict[str, Any] | None:
 def malformed_json_action(text: str) -> dict[str, Any] | None:
     """Recover an explicit tool action when a model truncates/mangles its JSON."""
     action_match = re.search(
-        r'''["']action["']\s*:\s*["']'''
+        r"""["']action["']\s*:\s*["']"""
         r"(open_app|open|click|long_click|long_press|type|scroll|swipe|"
-        r'''press_home|press_back|press_recent|wait|finished|terminate)["']''',
+        r"""press_home|press_back|press_recent|wait|finished|terminate)["']""",
         text,
     )
     if not action_match:
@@ -167,7 +174,7 @@ def malformed_json_action(text: str) -> dict[str, Any] | None:
                 result[key] = match.group(1)
     for key in ("coordinate", "coordinates", "point", "coordinate2", "point2"):
         match = re.search(
-            rf'''["']{key}["']\s*:\s*\[\s*'''
+            rf"""["']{key}["']\s*:\s*\[\s*"""
             r"(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)",
             text,
         )
@@ -284,22 +291,33 @@ def make_messages(
     history: list[str],
     resized_width: int,
     resized_height: int,
+    memory_context: object | None = None,
 ) -> list[dict[str, Any]]:
     if prompt_style == "owl":
         system = OWL_PROMPT.replace("{image_width}", str(resized_width)).replace(
             "{image_height}", str(resized_height)
         )
-        user = OWL_USER_QUERY.format(
+        template = (
+            OWL_USER_QUERY_RECORD if memory_context is not None else OWL_USER_QUERY
+        )
+        user = template.format(
             user_profile=profile,
             instruction=instruction,
             history_actions=history,
+            record=memory_context,
         )
     else:
         system = QWEN3VL_SYSTEM_PROMPT
-        user = QWEN3_USER_PROMPT.format(
+        template = (
+            QWEN3_USER_PROMPT_GENERALIZED
+            if memory_context is not None
+            else QWEN3_USER_PROMPT
+        )
+        user = template.format(
             user_profile=profile,
             instruction=instruction,
             history_actions=history,
+            retrieved_intent=memory_context,
         )
     return [
         {"role": "system", "content": [{"type": "text", "text": system}]},

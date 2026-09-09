@@ -59,6 +59,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--print-first", type=int, default=3)
+    parser.add_argument("--baseline-name", default="base")
+    parser.add_argument("--memory-contexts", default=None)
     return parser.parse_args()
 
 
@@ -87,10 +89,26 @@ def main() -> None:
     test_path = (REPO / args.test_path).resolve()
     history_root = Path(args.history_root).resolve()
     destination = (REPO / args.save_file).resolve()
-    test = json.loads(test_path.read_text())
+    full_test = json.loads(test_path.read_text())
+    test = full_test
     if args.limit is not None:
         test = test[: args.limit]
     profiles = load_profiles(REPO / "samples/user_profile.csv")
+    contexts = None
+    context_path = None
+    if args.memory_contexts:
+        context_path = (REPO / args.memory_contexts).resolve()
+        context_file = json.loads(context_path.read_text())
+        contexts = context_file["contexts"]
+        episodes = {row["id"].rsplit("_", 1)[0] for row in full_test}
+        if set(contexts) != episodes:
+            raise ValueError("Memory contexts do not cover test episodes exactly")
+        if context_file["protocol"].get("test_sha256") != sha256(test_path):
+            raise ValueError("Memory contexts were built for a different test file")
+        if context_file["protocol"].get("method") != args.baseline_name:
+            raise ValueError("Memory-context method does not match --baseline-name")
+    elif args.baseline_name != "base":
+        raise ValueError("A non-base baseline requires --memory-contexts")
 
     import transformers
     import vllm
@@ -120,6 +138,9 @@ def main() -> None:
         "gpu_name": torch.cuda.get_device_name(0),
         "transformers_version": transformers.__version__,
         "torch_version": torch.__version__,
+        "baseline_name": args.baseline_name,
+        "memory_contexts": str(context_path) if context_path else None,
+        "memory_contexts_sha256": sha256(context_path) if context_path else None,
     }
 
     outputs: list[dict[str, Any]] = []
@@ -141,10 +162,17 @@ def main() -> None:
             "max_num_seqs",
             "gpu_memory_utilization",
             "test_sha256",
+            "baseline_name",
+            "memory_contexts_sha256",
         ):
             if previous["protocol"].get(key) != protocol[key]:
                 raise ValueError(f"Resume protocol mismatch: {key}")
         print(f"resuming from {len(outputs)}/{len(test)} predictions", flush=True)
+
+    if len(outputs) == len(test):
+        print(json.dumps(metrics(outputs), ensure_ascii=False, indent=2))
+        print(f"already complete: {destination}")
+        return
 
     print(f"loading {args.model_name} through vLLM on physical GPU 0", flush=True)
     processor = AutoProcessor.from_pretrained(model_path, local_files_only=True)
@@ -204,6 +232,7 @@ def main() -> None:
                 action_history,
                 999,
                 999,
+                contexts[step["id"].rsplit("_", 1)[0]] if contexts else None,
             )
             text = processor.tokenizer.apply_chat_template(
                 messages,

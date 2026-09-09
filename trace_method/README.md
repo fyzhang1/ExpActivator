@@ -143,6 +143,78 @@ VLLM_USE_FLASHINFER_SAMPLER=0 "$VLLM_PYTHON" \
 Use `--resume` to continue any matching checkpoint.  The Transformers-only
 fallback is `../src/eval_execution/evaluation_new_backbones.py`.
 
+### Reproduce the paper memory baselines
+
+The four memory baselines use the same 15,966-row, first-80%-per-user
+chronological history split and seal one context for each of the 775 test
+episodes before execution inference. `Recent` supplies the latest three full
+intent/app/action records. `Retrieve` supplies the three history records whose
+intents have the highest Qwen3-Embedding-0.6B cosine similarity to the
+ambiguous query. `HIM-Agent` runs the released history filter unchanged, keeps
+clusters with at least three members, and retrieves the top three cluster
+representatives. None of these builders reads test answers.
+
+The paper reports GPT-5.1 (`gpt-5.1-2025-11-13`) as the LLM-UM summarizer, but
+neither those generated profiles nor a runnable LLM-UM builder are included in
+the release. This offline reproduction therefore uses the fixed local
+Qwen3.5-9B snapshot with greedy decoding. The generated file retains the raw
+output, parsed summaries, token counts, model revision, and the paper-model
+identifier so this substitution remains explicit.
+
+```bash
+EMBED_MODEL=/path/to/Qwen3-Embedding-0.6B
+
+CUDA_VISIBLE_DEVICES=0 USE_TF=0 "$PYTHON_BIN" \
+  HIM_agent/HIM_execution_filter.py \
+  --embed-model "$EMBED_MODEL" --data-path "$HISTORY_ROOT" \
+  --save-base trace_method/results/paper_baselines/him_preference_memory
+
+CUDA_VISIBLE_DEVICES=0 USE_TF=0 "$VLLM_PYTHON" \
+  src/eval_execution/build_llm_um_profiles_vllm.py \
+  --model-name Qwen3.5-9B --model-path "$QWEN35_MODEL" \
+  --history-root "$HISTORY_ROOT" \
+  --max-summaries 10 --max-actions-per-summary 3 \
+  --output trace_method/results/paper_baselines/llm_um_profiles.json
+
+# Retry only any profiles whose first response was incomplete at the output cap.
+CUDA_VISIBLE_DEVICES=0 USE_TF=0 "$VLLM_PYTHON" \
+  src/eval_execution/build_llm_um_profiles_vllm.py \
+  --model-name Qwen3.5-9B --model-path "$QWEN35_MODEL" \
+  --history-root "$HISTORY_ROOT" --resume-existing \
+  --max-summaries 6 --max-actions-per-summary 2 \
+  --output trace_method/results/paper_baselines/llm_um_profiles.json
+
+for METHOD in recent retrieve llm_um him_agent; do
+  CUDA_VISIBLE_DEVICES=0 USE_TF=0 "$PYTHON_BIN" \
+    src/eval_execution/build_paper_baseline_contexts.py \
+    --method "$METHOD" --embedding-model "$EMBED_MODEL" \
+    --history-root "$HISTORY_ROOT" \
+    --him-dir trace_method/results/paper_baselines/him_preference_memory \
+    --output "trace_method/results/paper_baselines/${METHOD}_contexts.json"
+done
+
+MAI_MODEL=/path/to/MAI-UI-8B/snapshot \
+QWEN35_MODEL=/path/to/Qwen3.5-9B/snapshot \
+OWL_MODEL=/path/to/GUI-Owl-1.5-8B-Instruct/snapshot \
+HISTORY_ROOT="$HISTORY_ROOT" VLLM_PYTHON="$VLLM_PYTHON" \
+  scripts/execution/eval_paper_baselines.sh
+
+"$PYTHON_BIN" trace_method/analyze_paper_baselines.py
+```
+
+See [`PAPER_BASELINE_RESULTS.md`](PAPER_BASELINE_RESULTS.md) for the complete
+three-backbone result table, paired uncertainty, integrity audit, and the
+LLM-UM reconstruction caveat. The consolidated four-backbone paper table,
+with Qwen3-VL included and TRACE in the final row, is available as
+[`COMPLETE_EXPERIMENT_TABLE.tex`](COMPLETE_EXPERIMENT_TABLE.tex).
+
+The matrix runner fixes the image budget at 200,704 pixels and the model
+context ceiling at 8,192 tokens. The latter was selected after auditing all
+12 prompt sets; 4,096 would reject long histories, while every audited prompt
+plus its image and 256-token response allowance fits within 8,192. Runs are
+checkpointed, resumable, and rejected if the baseline label, context hash,
+test hash, model revision, or GPU assignment changes.
+
 The raw runs above are controls, not the full TRACE integration.  The commands
 below calibrate a representation separately for each backbone on the same 756
 held-out historical actions, compile that backbone's full visual cache, and

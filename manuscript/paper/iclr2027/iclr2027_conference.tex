@@ -1,0 +1,136 @@
+
+\documentclass{article} % For LaTeX2e
+\PassOptionsToPackage{table}{xcolor}
+\usepackage{iclr2027_conference,times}
+\usepackage[T1]{fontenc}
+
+% Optional math commands from https://github.com/goodfeli/dlbook_notation.
+\input{math_commands.tex}
+
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+
+\title{Latent State Addressing for Long-Horizon Personalized GUI Agents}
+
+% Authors must not appear in the submitted version. They should be hidden
+% as long as the \iclrfinalcopy macro remains commented out below.
+% Non-anonymous submissions will be rejected without review.
+
+\author{Antiquus S.~Hippocampus, Natalia Cerebro \& Amelie P. Amygdale \thanks{ Use footnote for providing further information
+about author (webpage, alternative address)---\emph{not} for acknowledging
+funding agencies.  Funding acknowledgements go at the end of the paper.} \\
+Department of Computer Science\\
+Cranberry-Lemon University\\
+Pittsburgh, PA 15213, USA \\
+\texttt{\{hippo,brain,jen\}@cs.cranberry-lemon.edu} \\
+\And
+Ji Q. Ren \& Yevgeny LeNet \\
+Department of Computational Neuroscience \\
+University of the Witwatersrand \\
+Joburg, South Africa \\
+\texttt{\{robot,net\}@wits.ac.za} \\
+\AND
+Coauthor \\
+Affiliation \\
+Address \\
+\texttt{email}
+}
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to \LaTeX{} to determine where to break
+% the lines. Using \AND forces a linebreak at that point. So, if \LaTeX{}
+% puts 3 of 4 authors names on the first line, and the last on the second
+% line, try using \AND instead of \And before the third author name.
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+%\iclrfinalcopy % Uncomment for camera-ready version, but NOT for submission.
+\begin{document}
+
+
+\maketitle
+
+\begin{abstract}
+The abstract paragraph should be indented 1/2~inch (3~picas) on both left and
+right-hand margins. Use 10~point type, with a vertical spacing of 11~points.
+The word \textsc{Abstract} must be centered, in small caps, and in point size 12. Two
+line spaces precede the abstract. The abstract must be limited to one
+paragraph.
+\end{abstract}
+
+\section{Introduction}
+
+
+
+% Requires \usepackage{booktabs,graphicx}.
+\begin{table*}[t]
+    \centering
+    \caption{Complete personalized-execution results on AndroidIntent. All
+    values are percentages. Higher is better. Qwen3-VL baseline values are
+    from PersonalAlign Table~5; the other baseline columns and all TRACE
+    values are our complete evaluations.}
+    \label{tab:complete-personalized-execution}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{lccc|ccc|ccc|ccc}
+      \toprule
+      & \multicolumn{3}{c|}{Qwen3-VL-8B}
+      & \multicolumn{3}{c|}{MAI-UI-8B}
+      & \multicolumn{3}{c|}{Qwen3.5-9B}
+      & \multicolumn{3}{c}{GUI-Owl-1.5-8B} \\
+      \cmidrule(lr){2-4}\cmidrule(lr){5-7}
+      \cmidrule(lr){8-10}\cmidrule(lr){11-13}
+      Method & Type & SSR & CSR & Type & SSR & CSR
+             & Type & SSR & CSR & Type & SSR & CSR \\
+      \midrule
+      Base
+        & 46.600 & 20.600 & 26.600
+        & 51.762 & 17.890 & 22.260
+        & 50.120 & 17.183 & 21.427
+        & 58.181 & 22.742 & 21.515 \\
+      Recent$^{\dagger}$
+        & 49.400 & 21.100 & 33.200
+        & 47.593 & 18.143 & 21.158
+        & 49.387 & 17.915 & 25.471
+        & 59.078 & 23.917 & 27.244 \\
+      Retrieve
+        & 51.000 & 22.400 & 35.400
+        & 49.690 & 21.554 & 32.707
+        & 49.210 & 19.949 & 32.535
+        & 60.253 & 28.187 & 41.641 \\
+      LLM-UM$^{\ddagger}$
+        & 51.200 & 22.300 & 35.200
+        & 48.086 & 19.015 & 28.323
+        & 52.445 & 20.708 & 39.831
+        & 57.941 & 24.839 & 30.762 \\
+      HIM-Agent
+        & 52.000 & 24.000 & 42.300
+        & 48.162 & 19.912 & 28.673
+        & 51.358 & 20.960 & 37.833
+        & 58.724 & 27.189 & 35.583 \\
+      \midrule
+      \textbf{TRACE (ours)}
+        & \textbf{58.825} & \textbf{39.116} & \textbf{53.615}
+        & \textbf{58.939} & \textbf{39.330} & \textbf{53.812}
+        & \textbf{59.495} & \textbf{39.949} & \textbf{54.870}
+        & \textbf{60.430} & \textbf{40.076} & \textbf{54.875} \\
+      \bottomrule
+    \end{tabular}%
+    }
+  \end{table*}
+
+
+\bibliography{iclr2027_conference}
+\bibliographystyle{iclr2027_conference}
+
+\appendix
+\section{Appendix}
+You may include other additional sections here.
+
+
+\end{document}
