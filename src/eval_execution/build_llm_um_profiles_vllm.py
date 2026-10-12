@@ -23,7 +23,7 @@ from src.eval_execution.build_paper_baseline_contexts import (
     sha256,
 )
 from src.eval_execution.evaluation_new_backbones import candidate_json_objects
-from trace_method.execution_core import load_history_trajectories
+from expactivator.execution_core import load_history_trajectories
 
 SUMMARY_PROMPT = """Act as a user-modeling assistant. Summarize stable app and
 content preferences from the user's long-term mobile GUI records.

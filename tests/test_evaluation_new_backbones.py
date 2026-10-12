@@ -13,7 +13,7 @@ sys.path.insert(0, str(REPO))
 from evaluation_new_backbones import make_messages, parse_action
 
 from src.eval_execution.build_paper_baseline_contexts import chronological_history
-from trace_method.evaluation_stats import paired_binary
+from expactivator.evaluation_stats import paired_binary
 
 
 def test_parse_nested_mobile_use_json() -> None:

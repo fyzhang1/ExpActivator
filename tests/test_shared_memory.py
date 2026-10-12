@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import torch
 
-from trace_method.shared_memory import (
+from expactivator.shared_memory import (
     SCHEMA,
     execution_trajectories,
     task_frame,

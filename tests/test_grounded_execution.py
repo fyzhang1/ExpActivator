@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from src.eval_execution.evaluation_new_backbones import make_messages
-from trace_method.analyze_grounded_execution import policy_evidence_interaction
-from trace_method.build_execution_grounded_evidence import evidence
-from trace_method.execution_core import historical_action_to_qwen
+from expactivator.analyze_grounded_execution import policy_evidence_interaction
+from expactivator.build_execution_grounded_evidence import evidence
+from expactivator.execution_core import historical_action_to_qwen
 
 
 def user_text(messages: list[dict]) -> str:

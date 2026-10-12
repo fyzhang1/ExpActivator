@@ -7,7 +7,7 @@ set -euo pipefail
 : "${HISTORY_ROOT:?Set HISTORY_ROOT to the Fingertip history root}"
 
 PYTHON_BIN="${VLLM_PYTHON:-python}"
-OUTPUT_ROOT="${OUTPUT_ROOT:-trace_method/results/paper_baselines}"
+OUTPUT_ROOT="${OUTPUT_ROOT:-expactivator/results/paper_baselines}"
 unset VLLM_PYTHON
 
 export CUDA_VISIBLE_DEVICES=0

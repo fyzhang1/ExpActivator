@@ -2,7 +2,7 @@
 
 The superseded memory (``samples/train_set.csv``) retained 490 of the 775
 execution-test episodes together with their explicit original instructions,
-which leaked first-action answers and gave TRACE a memory the four paper
+which leaked first-action answers and gave ExpActivator a memory the four paper
 baselines never saw.  The previous in-code check could never fire, so these
 tests assert both that the split is right and that the audit actually rejects
 a wrong one.
@@ -17,7 +17,7 @@ import pandas as pd
 import pytest
 
 from src.eval_execution.build_paper_baseline_contexts import chronological_history
-from trace_method.execution_core import (
+from expactivator.execution_core import (
     audit_memory_split,
     execution_memory_frame,
     held_out_episode_keys,
@@ -33,7 +33,7 @@ def keys_of(frame: pd.DataFrame) -> set[str]:
 
 
 def test_memory_is_identical_to_the_paper_baseline_history() -> None:
-    """TRACE and the four memory baselines must read the same histories."""
+    """ExpActivator and the four memory baselines must read the same histories."""
     memory = execution_memory_frame(REPO)
     baseline = chronological_history(pd.read_csv(REPO / "samples/total.csv"))
     assert len(memory) == len(baseline)

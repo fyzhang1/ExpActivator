@@ -6,13 +6,13 @@ if [[ -n "${WAIT_PID:-}" ]]; then
 fi
 RUNNER=/storage/zhangfuyao/miniforge3/envs/hymem-serve/bin/python
 MODEL_PATH=/storage/zhangfuyao/.cache/huggingface/hub/models--Qwen--Qwen3-VL-8B-Instruct/snapshots/0c351dd01ed87e9c1b53cbc748cba10e6187ff3b
-STUDY_DIR=trace_method/results/leap_ablations/user_history_partial
+STUDY_DIR=expactivator/results/leap_ablations/user_history_partial
 export CUDA_VISIBLE_DEVICES=0 USE_TF=0 VLLM_ENABLE_V1_MULTIPROCESSING=0
 export VLLM_USE_FLASHINFER_SAMPLER=0 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
 for variant in own partial_other base; do
     context_args=()
     if [[ "$variant" != base ]]; then
-        context_args=(--baseline-name trace_grounded --memory-contexts "$STUDY_DIR/${variant}_contexts.json")
+        context_args=(--baseline-name expactivator_grounded --memory-contexts "$STUDY_DIR/${variant}_contexts.json")
     fi
     echo "Running entry-only user history condition: $variant"
     "$RUNNER" src/eval_execution/evaluation_new_backbones_vllm.py \

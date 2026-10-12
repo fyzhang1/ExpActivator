@@ -1,8 +1,8 @@
 notebook/
 results/
-!trace_method/results/
-!trace_method/results/.gitignore
-!trace_method/results/*.md
+!expactivator/results/
+!expactivator/results/.gitignore
+!expactivator/results/*.md
 __pycache__/
 .ruff_cache/
 *.ipynb

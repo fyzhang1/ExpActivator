@@ -3,7 +3,7 @@ import unittest
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from trace_method.analyze_state_conditioning_experiment import paired_cluster, by_id
+from expactivator.analyze_state_conditioning_experiment import paired_cluster, by_id
 
 
 class ClusteredPairingTests(unittest.TestCase):

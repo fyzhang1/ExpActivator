@@ -17,7 +17,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
 
-from trace_method.execution_core import load_history_trajectories
+from expactivator.execution_core import load_history_trajectories
 
 
 def parse_args() -> argparse.Namespace:
@@ -37,7 +37,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--him-dir", default="result/HIM_Agent/preference_memory")
     parser.add_argument(
         "--llm-um-file",
-        default="trace_method/results/paper_baselines/llm_um_profiles.json",
+        default="expactivator/results/paper_baselines/llm_um_profiles.json",
     )
     parser.add_argument("--output", required=True)
     return parser.parse_args()
