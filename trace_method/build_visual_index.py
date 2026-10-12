@@ -2,8 +2,9 @@
 
 Two manifests are supported. ``calibration`` contains only historical
 pseudo-held-out trajectories and their earlier memories. ``full`` contains
-the released execution screenshots and the exact same top-5 historical pools
-used by TRACE.  Neither manifest opens target actions while selecting images.
+the released execution screenshots and the same history-selected top-$K$
+trajectory pools used by TRACE. Neither manifest opens target actions while
+selecting images.
 
 Each image stores normalized global means from visual layers 8, 16, and 24,
 plus the final visual layer and four final-layer spatial quadrant means.  For
@@ -35,6 +36,7 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 
 from trace_method.execution_core import (
+    execution_memory_frame,
     load_history_trajectories,
     resolve_test_image,
 )
@@ -88,7 +90,7 @@ def selected_trajectories(
 def build_manifest(args: argparse.Namespace) -> list[str]:
     repo = Path(args.repo).resolve()
     history_root = Path(args.history_root).resolve()
-    train = pd.read_csv(repo / "samples/train_set.csv").reset_index(drop=True)
+    train = execution_memory_frame(repo)
     trajectories = load_history_trajectories(train, history_root)
     paths: set[str] = set()
 
@@ -183,12 +185,17 @@ class VisionFeatureAdapter:
         outputs = self.vision(pixel_values, grid_thw=grids)
         merge = int(self.vision.spatial_merge_size)
         if self.model_type == "qwen3_vl":
-            deep = outputs.deepstack_features
+            # Transformers releases expose the same values either as a
+            # two-tuple ``(final, deepstack)`` or as named output fields.
+            if isinstance(outputs, tuple):
+                final, deep = outputs
+            else:
+                deep = outputs.deepstack_features
+                final = outputs.pooler_output
             if deep is None or len(deep) != len(self.layer_indices):
                 raise ValueError(
                     "Qwen3-VL checkpoint did not expose three deep-stack states"
                 )
-            final = outputs.pooler_output
             split_sizes = (grids.prod(-1) // merge**2).tolist()
             layouts = [(int(grid[1]) // merge, int(grid[2]) // merge) for grid in grids]
             return list(deep), final, split_sizes, layouts

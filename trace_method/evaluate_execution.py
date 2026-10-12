@@ -17,7 +17,6 @@ from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 import torch
 from PIL import Image
 
@@ -25,13 +24,17 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 
 from trace_method.execution_core import (
+    audit_memory_split,
+    execution_memory_frame,
     historical_action_to_qwen,
+    history_key,
     load_history_trajectories,
     load_outputs,
     resolve_test_image,
     scored_row,
     summarize,
 )
+from trace_method.shared_memory import execution_trajectories, task_frame
 
 
 def parse_args() -> argparse.Namespace:
@@ -39,6 +42,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--repo", default=str(REPO))
     parser.add_argument(
         "--index", default="trace_method/results/execution_app_predictions_gpu0.json"
+    )
+    parser.add_argument(
+        "--shared-memory",
+        default=None,
+        help="Read execution metadata and trajectory references from this artifact",
     )
     parser.add_argument(
         "--calibration",
@@ -49,6 +57,9 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--test-path", default="data/personal_execution/personal_execution.json"
+    )
+    parser.add_argument(
+        "--episodes", default="data/personal_execution/personal_samples.json"
     )
     parser.add_argument(
         "--baseline", default="trace_method/results/execution_baseline_gpu0.json"
@@ -76,6 +87,7 @@ def load_selected_features(
     )
     if (suffix == "centered") != (center is not None):
         raise ValueError("Selected visual mode and saved center are inconsistent")
+    legacy_deep8 = selected_mode == "deep8_raw" and "model_name" not in manifest
     result: dict[str, np.ndarray] = {}
     for chunk_path in sorted(directory.glob("chunk_*.pt")):
         chunk = torch.load(chunk_path, map_location="cpu", weights_only=False)
@@ -103,7 +115,13 @@ def load_selected_features(
             values = values - center[None, ...]
             norms = np.linalg.norm(values, axis=-1, keepdims=True)
             values = values / np.maximum(norms, 1e-12)
-        values = values.reshape(values.shape[0], -1) / np.sqrt(values.shape[1])
+        # The original Qwen-only cache was scored directly in float32.  Keep
+        # that sealed numerical path for equivalence; newer multi-block caches
+        # retain their generalized mean-block-cosine representation.
+        if legacy_deep8:
+            values = values[:, 0]
+        else:
+            values = values.reshape(values.shape[0], -1) / np.sqrt(values.shape[1])
         for row, path in enumerate(chunk["paths"]):
             result[str(path)] = values[row]
     if len(result) != len(manifest["paths"]):
@@ -124,6 +142,9 @@ def main() -> None:
     calibration = json.loads((repo / args.calibration).read_text())
     if calibration.get("test_data_accessed") is not False:
         raise ValueError("Representation calibration must be history-only")
+    calibrated_history = calibration.get("history_audit", {})
+    if calibrated_history and calibrated_history.get("test_episodes_in_memory") != 0:
+        raise ValueError("Representation calibration used a leaking history memory")
     selected_mode = str(calibration["selected_mode"])
     features, visual_manifest = load_selected_features(
         repo / args.visual_dir,
@@ -140,7 +161,16 @@ def main() -> None:
             if calibrated_model.get(key) != visual_manifest.get(key):
                 raise ValueError(f"Calibration/full visual model mismatch: {key}")
 
-    train = pd.read_csv(repo / "samples/train_set.csv").reset_index(drop=True)
+    if args.shared_memory:
+        shared = torch.load(
+            repo / args.shared_memory, map_location="cpu", weights_only=False
+        )
+        train = task_frame(shared, "execution")
+        trajectories = execution_trajectories(shared)
+    else:
+        train = execution_memory_frame(repo)
+        trajectories = load_history_trajectories(train, history_root)
+    history_audit = audit_memory_split(train, repo, args.episodes)
     test_path = repo / args.test_path
     test = json.loads(test_path.read_text())
     index = json.loads((repo / args.index).read_text())
@@ -152,19 +182,21 @@ def main() -> None:
     if len(episode_ids) != 775 or len(set(episode_ids)) != 775:
         raise ValueError("History index must contain all 775 unique episodes")
     index_row = {episode_id: row for row, episode_id in enumerate(episode_ids)}
-    trajectories = load_history_trajectories(train, history_root)
-
     # Construct the same top-5 goal-restricted historical pools as RGB TRACE.
     # Target answers are not read during pool construction or state selection.
     pools: dict[str, tuple[np.ndarray, list[tuple[str, int, str]]]] = {}
-    exact_exclusion_violations = 0
+    memory_keys = [history_key(row.user_id, row.time) for row in train.itertuples()]
+    # Counted where the exclusion actually happens.  The previous counter was
+    # incremented in the loop below, after the identical condition had already
+    # skipped every offending row, so it could never leave zero and proved
+    # nothing.  This one records real skips and the loop below now raises.
+    self_neighbors_excluded = 0
     for episode_id in episode_ids:
         query_index = index_row[episode_id]
-        user, time = episode_id.split("_", 1)
         selected = []
         for train_index in index["factorized_neighbors"][query_index]:
-            source = train.iloc[int(train_index)]
-            if int(source.user_id) == int(user) and str(source.time) == time:
+            if memory_keys[int(train_index)] == episode_id:
+                self_neighbors_excluded += 1
                 continue
             if not trajectories[int(train_index)]:
                 continue
@@ -173,9 +205,10 @@ def main() -> None:
                 break
         states = []
         for train_index in selected:
-            source = train.iloc[train_index]
-            if int(source.user_id) == int(user) and str(source.time) == time:
-                exact_exclusion_violations += 1
+            if memory_keys[train_index] == episode_id:
+                raise ValueError(
+                    f"Trajectory memory for {episode_id} retained its own episode"
+                )
             for path, action in trajectories[train_index]:
                 if str(path) in features:
                     states.append((features[str(path)], action, train_index, str(path)))
@@ -226,7 +259,8 @@ def main() -> None:
         "protocol": {
             "name": (
                 "TRACE with frozen "
-                f"{visual_manifest['model_name']} visual state synchronization"
+                f"{visual_manifest.get('model_name', 'Qwen3-VL')} "
+                "visual state synchronization"
             ),
             "training": "none; visual backbone and all other encoders frozen",
             "representation_selection": "history-only pseudo-held-out trajectories",
@@ -237,21 +271,22 @@ def main() -> None:
                 "mean block cosine similarity of the history-selected frozen "
                 "visual representation"
             ),
-            "visual_model_name": visual_manifest["model_name"],
-            "visual_model_path": visual_manifest["model_path"],
-            "visual_model_revision": visual_manifest["model_revision"],
-            "visual_model_type": visual_manifest["model_type"],
-            "feature_readout": visual_manifest["feature_readout"],
+            "visual_model_name": visual_manifest.get("model_name", "Qwen3-VL"),
+            "visual_model_path": visual_manifest.get("model_path"),
+            "visual_model_revision": visual_manifest.get("model_revision"),
+            "visual_model_type": visual_manifest.get("model_type"),
+            "feature_readout": visual_manifest.get("feature_readout"),
             "pixels": visual_manifest["pixels"],
             "n_steps": len(test),
             "n_episodes": len(episode_ids),
             "test_sha256": hashlib.sha256(test_path.read_bytes()).hexdigest(),
-            "physical_gpu_for_feature_extraction": visual_manifest["physical_gpu"],
-            "visible_cuda_devices_for_feature_extraction": visual_manifest[
+            "physical_gpu_for_feature_extraction": visual_manifest.get("physical_gpu"),
+            "visible_cuda_devices_for_feature_extraction": visual_manifest.get(
                 "visible_cuda_devices"
-            ],
+            ),
+            "history_audit": history_audit,
             "exact_train_episode_excluded_from_trajectory_memory": True,
-            "exact_exclusion_violations": exact_exclusion_violations,
+            "self_neighbors_excluded_from_trajectory_memory": self_neighbors_excluded,
             "test_answers_used_for_prediction": False,
         },
         "metrics": {
@@ -260,6 +295,8 @@ def main() -> None:
         },
         "outputs": outputs,
     }
+    if args.shared_memory:
+        result["protocol"]["shared_memory"] = True
     destination = repo / args.output
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(json.dumps(result, ensure_ascii=False, indent=2))

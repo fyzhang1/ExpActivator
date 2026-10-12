@@ -20,12 +20,12 @@ import sys
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 
 from trace_method.execution_core import (
+    execution_memory_frame,
     historical_action_to_qwen,
     load_history_trajectories,
     load_outputs,
@@ -62,7 +62,7 @@ def main() -> None:
     args = parse_args()
     repo = Path(args.repo).resolve()
     history_root = Path(args.history_root).resolve()
-    train = pd.read_csv(repo / "samples/train_set.csv").reset_index(drop=True)
+    train = execution_memory_frame(repo)
     test = json.loads((repo / args.test_path).read_text())
     index = json.loads((repo / args.index).read_text())
     baseline = load_outputs(repo / args.baseline)

@@ -1,9 +1,10 @@
-"""Compile canonical target-app labels from official factual train histories.
+"""Compile canonical target-app labels from official factual histories.
 
-Only ``samples/train_set.csv`` is read.  The frozen base model converts each
-explicit training instruction and its recorded foreground package into the app
-display name that an ``open_app`` action should use.  No execution-test file or
-label is accessed.
+The memory is the official chronological first-80%-per-user split of
+``samples/total.csv``; no execution-test episode is inside it, and no
+execution-test file or label is accessed.  Labels are keyed by the stable
+``(user_id, time)`` episode identity rather than by row position, so one
+compiled file can serve any history split without silent mis-alignment.
 """
 
 from __future__ import annotations
@@ -11,12 +12,21 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import sys
 from pathlib import Path
 
-import pandas as pd
 import torch
 from tqdm import tqdm
 from transformers import AutoProcessor, Qwen3VLForConditionalGeneration
+
+REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO))
+
+from trace_method.execution_core import (
+    audit_memory_split,
+    execution_memory_frame,
+    history_key,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -30,6 +40,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-new-tokens", type=int, default=24)
     parser.add_argument("--checkpoint-every", type=int, default=256)
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument(
+        "--reuse",
+        default=None,
+        help=(
+            "Import already-compiled labels from this file by (user_id, time) "
+            "and generate only the records it does not cover"
+        ),
+    )
     return parser.parse_args()
 
 
@@ -50,11 +68,15 @@ def clean_label(text: str) -> str:
     return value
 
 
-def save(path: Path, rows: list[dict]) -> None:
+def save(path: Path, rows: list[dict], audit: dict) -> None:
     path.write_text(
         json.dumps(
             {
-                "protocol": "frozen Qwen compilation from official train_set.csv only",
+                "protocol": (
+                    "frozen Qwen compilation from the official chronological "
+                    "first-80%-per-user split of samples/total.csv only"
+                ),
+                "history_audit": audit,
                 "n_rows": len(rows),
                 "rows": rows,
             },
@@ -64,19 +86,62 @@ def save(path: Path, rows: list[dict]) -> None:
     )
 
 
+def load_existing(path: Path) -> dict[str, dict]:
+    if not path.exists():
+        return {}
+    return {
+        history_key(row["user_id"], row["time"]): row
+        for row in json.loads(path.read_text())["rows"]
+    }
+
+
 @torch.inference_mode()
 def main() -> None:
     args = parse_args()
     repo = Path(args.repo).resolve()
-    train = pd.read_csv(repo / "samples/train_set.csv").reset_index(drop=True)
+    memory = execution_memory_frame(repo)
+    audit = audit_memory_split(memory, repo)
     destination = repo / args.output
     destination.parent.mkdir(parents=True, exist_ok=True)
-    rows: list[dict] = []
-    if args.resume and destination.exists():
-        rows = json.loads(destination.read_text())["rows"]
-        for i, row in enumerate(rows):
-            if row["row_index"] != i:
-                raise ValueError("Existing label file is not an ordered prefix")
+
+    # Labels are addressed by episode identity, so an existing file compiled
+    # under any earlier split can be reused for every record it already covers.
+    existing: dict[str, dict] = {}
+    if args.reuse:
+        existing.update(load_existing(repo / args.reuse))
+    if args.resume:
+        existing.update(load_existing(destination))
+
+    keys = [history_key(row.user_id, row.time) for row in memory.itertuples()]
+    pending = [index for index, key in enumerate(keys) if key not in existing]
+    print(
+        f"memory records: {len(memory)}; reused labels: {len(memory) - len(pending)}; "
+        f"to compile: {len(pending)}"
+    )
+
+    def ordered_rows() -> list[dict]:
+        rows = []
+        for position, key in enumerate(keys):
+            if key not in existing:
+                continue
+            source = memory.iloc[position]
+            rows.append(
+                {
+                    "record_id": key,
+                    "row_index": position,
+                    "user_id": int(source.user_id),
+                    "time": str(source.time),
+                    "package": str(source.app),
+                    "app_name": existing[key]["app_name"],
+                    "raw_output": existing[key].get("raw_output", ""),
+                }
+            )
+        return rows
+
+    if not pending:
+        save(destination, ordered_rows(), audit)
+        print("saved", destination, len(keys), "(nothing to compile)")
+        return
 
     processor = AutoProcessor.from_pretrained(args.model_path, local_files_only=True)
     processor.tokenizer.padding_side = "left"
@@ -88,12 +153,14 @@ def main() -> None:
         local_files_only=True,
     ).eval()
 
+    compiled = 0
     for start in tqdm(
-        range(len(rows), len(train), args.batch_size), desc="compile train app labels"
+        range(0, len(pending), args.batch_size), desc="compile history app labels"
     ):
-        frame = train.iloc[start : start + args.batch_size]
+        batch = pending[start : start + args.batch_size]
         prompts = []
-        for _, row in frame.iterrows():
+        for position in batch:
+            source = memory.iloc[position]
             messages = [
                 {
                     "role": "user",
@@ -101,7 +168,7 @@ def main() -> None:
                         {
                             "type": "text",
                             "text": make_prompt(
-                                str(row.app), str(row.intentDescription)
+                                str(source.app), str(source.intentDescription)
                             ),
                         }
                     ],
@@ -129,25 +196,22 @@ def main() -> None:
             ],
             skip_special_tokens=True,
         )
-        for row_index, ((_, row), raw) in enumerate(
-            zip(frame.iterrows(), decoded), start=start
-        ):
-            rows.append(
-                {
-                    "row_index": row_index,
-                    "user_id": int(row.user_id),
-                    "time": str(row.time),
-                    "package": str(row.app),
-                    "app_name": clean_label(raw),
-                    "raw_output": raw,
-                }
-            )
-        if (
-            args.checkpoint_every
-            and len(rows) % args.checkpoint_every < args.batch_size
-        ):
-            save(destination, rows)
-    save(destination, rows)
+        for position, raw in zip(batch, decoded):
+            source = memory.iloc[position]
+            existing[keys[position]] = {
+                "user_id": int(source.user_id),
+                "time": str(source.time),
+                "app_name": clean_label(raw),
+                "raw_output": raw,
+            }
+        compiled += len(batch)
+        if args.checkpoint_every and compiled % args.checkpoint_every < args.batch_size:
+            save(destination, ordered_rows(), audit)
+
+    rows = ordered_rows()
+    if len(rows) != len(keys):
+        raise ValueError(f"Compiled {len(rows)} labels for {len(keys)} memory records")
+    save(destination, rows, audit)
     print("saved", destination, len(rows))
 
 

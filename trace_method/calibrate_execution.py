@@ -1,10 +1,13 @@
 """Select TRACE neighborhood sizes using historical records only.
 
-No AndroidIntent execution-test row, screenshot, or annotation is opened.  App
-neighborhood size is evaluated on the chronological final 20% of each user's
-training histories.  Trajectory neighborhood size is evaluated by treating
+The memory is the official chronological first-80%-per-user split of
+``samples/total.csv``, which provably contains none of the 775 execution-test
+episodes.  No AndroidIntent execution-test row, screenshot, or annotation is
+opened.  App neighborhood size is evaluated on the chronological final 20% of
+each user's history memory.  Trajectory neighborhood size is evaluated by treating
 each user's last readable history episode as a held-out execution and using
-only earlier episodes as memory.
+only earlier episodes as memory.  Every candidate k scores the identical
+action set, so their accuracies share one denominator.
 """
 
 from __future__ import annotations
@@ -25,6 +28,11 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 
 from src.eval_execution.utils import eval_action
+from trace_method.execution_core import (
+    audit_memory_split,
+    execution_memory_frame,
+    load_app_labels,
+)
 
 COORD_RE = re.compile(r"coordinates=\((\d+),\s*(\d+)\)")
 
@@ -36,7 +44,7 @@ def parse_args() -> argparse.Namespace:
         "--cache", default="trace_method/results/execution_history_index_gpu0.pt"
     )
     parser.add_argument(
-        "--train-labels", default="trace_method/results/execution_app_labels.json"
+        "--history-labels", default="trace_method/results/execution_app_labels.json"
     )
     parser.add_argument("--history-root", default="data/Fingertip")
     parser.add_argument("--app-k", default="1,3,5,8,10,16,32")
@@ -105,13 +113,13 @@ def main() -> None:
     root = Path(args.history_root).resolve()
     app_k = [int(value) for value in args.app_k.split(",")]
     trajectory_k = [int(value) for value in args.trajectory_k.split(",")]
-    train = pd.read_csv(repo / "samples/train_set.csv").reset_index(drop=True)
+    train = execution_memory_frame(repo)
+    history_audit = audit_memory_split(train, repo)
     cache = torch.load(repo / args.cache, map_location="cpu", weights_only=False)
     keys = cache["residual_keys"].float()
-    labels = [
-        str(row["app_name"])
-        for row in json.loads((repo / args.train_labels).read_text())["rows"]
-    ]
+    if len(keys) != len(train):
+        raise ValueError("Text cache and history memory are misaligned")
+    labels = load_app_labels(repo, args.history_labels, train)
 
     app_hits = {k: 0 for k in app_k}
     app_total = 0
@@ -144,8 +152,6 @@ def main() -> None:
         similarities = keys[target] @ keys[memory].T
         order = memory[torch.argsort(similarities, descending=True)].tolist()
         order = order[: max(trajectory_k)]
-        held_out_episodes += 1
-
         pools = {}
         for k in trajectory_k:
             states = []
@@ -155,14 +161,16 @@ def main() -> None:
                     if descriptor is not None:
                         states.append((descriptor, action))
             pools[k] = states
+        # Every k must score the identical action set, otherwise the selection
+        # compares accuracies computed over different denominators.
+        if not all(pools[k] for k in trajectory_k):
+            continue
 
         for image_path, target_action in trajectories[target]:
             query_image, (width, height) = thumbnail(str(image_path))
             if query_image is None:
                 continue
             for k in trajectory_k:
-                if not pools[k]:
-                    continue
                 _, prediction = min(
                     pools[k],
                     key=lambda state: float(np.mean((query_image - state[0]) ** 2)),
@@ -170,22 +178,29 @@ def main() -> None:
                 _, success = eval_action(prediction, target_action, width, height)
                 trajectory_counts[k][0] += 1
                 trajectory_counts[k][1] += success
+        held_out_episodes += 1
         if held_out_episodes % 10 == 0:
             print(
                 f"calibrated {held_out_episodes} users; cache={thumbnail.cache_info()}",
                 flush=True,
             )
 
+    if not app_total:
+        raise ValueError("App calibration produced no validation records")
+    totals = {total for total, _ in trajectory_counts.values()}
+    if len(totals) != 1 or not totals.pop():
+        raise ValueError("Trajectory calibration denominators differ across k")
     app_accuracy = {str(k): app_hits[k] / app_total for k in app_k}
     trajectory_accuracy = {
         str(k): successes / total for k, (total, successes) in trajectory_counts.items()
     }
     result = {
         "protocol": (
-            "training histories only; chronological pseudo-held-out app records; "
+            "history memory only; chronological pseudo-held-out app records; "
             "last historical episode per user held out for trajectory calibration"
         ),
-        "test_data_accessed": False,
+        "history_audit": history_audit,
+        "test_data_accessed": history_audit["test_data_accessed"],
         "app_validation_records": app_total,
         "app_accuracy": app_accuracy,
         "selected_app_k": min(app_k, key=lambda k: (-app_accuracy[str(k)], k)),

@@ -19,6 +19,11 @@ from trace_method.evaluation_stats import (
     metrics,
     paired_binary,
 )
+from trace_method.execution_core import (
+    audit_memory_split,
+    execution_memory_frame,
+    history_key,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -35,7 +40,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--test-path", default="data/personal_execution/personal_execution.json"
     )
-    parser.add_argument("--train-path", default="samples/train_set.csv")
+    parser.add_argument(
+        "--legacy-train-path",
+        default="samples/train_set.csv",
+        help=(
+            "Released non-chronological CSV, retained only to report how many "
+            "test episodes the superseded memory would have exposed"
+        ),
+    )
     parser.add_argument("--bootstrap-samples", type=int, default=20_000)
     parser.add_argument("--seed", type=int, default=20260908)
     parser.add_argument(
@@ -139,14 +151,28 @@ def main() -> None:
         },
     }
 
-    train = pd.read_csv(REPO / args.train_path)
-    train_ids = {f"{int(row.user_id)}_{row.time}" for row in train.itertuples()}
+    # The active memory is the chronological first-80% split, which contains
+    # no test episode, so "overlap" is empty by construction.  The split is
+    # kept as a regression check and reported against the superseded
+    # train_set.csv memory, whose overlap is the leak this audit must catch.
+    memory = execution_memory_frame(REPO)
+    result["history_audit"] = audit_memory_split(memory, REPO)
+    legacy = pd.read_csv(REPO / args.legacy_train_path)
+    legacy_ids = {history_key(row.user_id, row.time) for row in legacy.itertuples()}
+    memory_ids = {history_key(row.user_id, row.time) for row in memory.itertuples()}
+    episode_ids = {row["id"].rsplit("_", 1)[0] for row in test}
+    result["history_audit"]["superseded_train_set_overlap"] = len(
+        legacy_ids & episode_ids
+    )
     for split, require_overlap in (("overlap", True), ("nonoverlap", False)):
         positions = [
             index
             for index, row in enumerate(test)
-            if (row["id"].rsplit("_", 1)[0] in train_ids) == require_overlap
+            if (row["id"].rsplit("_", 1)[0] in memory_ids) == require_overlap
         ]
+        if not positions:
+            result[split] = {"n_steps": 0, "metrics": None, "note": "empty split"}
+            continue
         rgb_split = subset(rgb, positions)
         method_split = subset(method, positions)
         baseline_split = subset(baseline, positions)

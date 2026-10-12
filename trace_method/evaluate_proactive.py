@@ -15,6 +15,7 @@ import argparse
 import csv
 import hashlib
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -23,6 +24,9 @@ import pandas as pd
 import torch
 
 REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO))
+
+from trace_method.shared_memory import task_frame, task_keys
 
 
 def parse_args() -> argparse.Namespace:
@@ -30,6 +34,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--repo", default=str(REPO))
     parser.add_argument(
         "--index", default="trace_method/results/proactive_history_index_gpu0.pt"
+    )
+    parser.add_argument(
+        "--shared-memory",
+        default=None,
+        help="Read the proactive full-intent/time/scenario view from this artifact",
     )
     parser.add_argument(
         "--positive", default="data/proactive_suggestion/proactive_samples.json"
@@ -167,17 +176,21 @@ def write_official_csv(path: Path, rows: list[dict[str, Any]]) -> None:
 def main() -> None:
     args = parse_args()
     repo = Path(args.repo).resolve()
-    index_path = repo / args.index
+    index_path = repo / (args.shared_memory or args.index)
     positive_path = repo / args.positive
     negative_path = repo / args.negative
     cache = torch.load(index_path, map_location="cpu", weights_only=False)
-    total = pd.read_csv(repo / "samples/total.csv").reset_index(drop=True)
-    memory = (
-        total.iloc[cache["memory_indices"]]
-        .reset_index()
-        .rename(columns={"index": "source_index"})
-    )
-    keys = cache["keys"].float().numpy()
+    if args.shared_memory:
+        memory = task_frame(cache, "proactive")
+        keys = task_keys(cache, "full_intent").float().numpy()
+    else:
+        total = pd.read_csv(repo / "samples/total.csv").reset_index(drop=True)
+        memory = (
+            total.iloc[cache["memory_indices"]]
+            .reset_index()
+            .rename(columns={"index": "source_index"})
+        )
+        keys = cache["keys"].float().numpy()
     if len(memory) != len(keys):
         raise ValueError("Index rows and embedding keys are misaligned")
     user_indices = {
@@ -268,6 +281,8 @@ def main() -> None:
         },
         "predictions": predictions,
     }
+    if args.shared_memory:
+        result["audit"]["shared_memory"] = True
     output = repo / args.output
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(result, ensure_ascii=False, indent=2))

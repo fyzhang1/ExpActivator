@@ -10,7 +10,6 @@ from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 import torch
 from PIL import Image
 from scipy.stats import binomtest
@@ -19,7 +18,11 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 
 from src.eval_execution.utils import eval_action
-from trace_method.execution_core import load_history_trajectories
+from trace_method.execution_core import (
+    audit_memory_split,
+    execution_memory_frame,
+    load_history_trajectories,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -122,7 +125,8 @@ def main() -> None:
     args = parse_args()
     repo = Path(args.repo).resolve()
     root = Path(args.history_root).resolve()
-    train = pd.read_csv(repo / "samples/train_set.csv").reset_index(drop=True)
+    train = execution_memory_frame(repo)
+    history_audit = audit_memory_split(train, repo)
     trajectories = load_history_trajectories(train, root)
     text_cache = torch.load(
         repo / args.text_cache, map_location="cpu", weights_only=False
@@ -254,10 +258,12 @@ def main() -> None:
     )
     result = {
         "protocol": (
-            "training histories only; final readable trajectory per user held out; "
-            "first/open-app state excluded; exact same top-5 goal pools for all modes"
+            "history memory only; final readable trajectory per user held out; "
+            "first/open-app state excluded; exact same top-"
+            f"{args.trajectory_top_k} goal pools for all modes"
         ),
-        "test_data_accessed": False,
+        "history_audit": history_audit,
+        "test_data_accessed": history_audit["test_data_accessed"],
         "validation_actions": len(cases),
         "memory_images": len(memory_paths),
         "accuracy": accuracy,

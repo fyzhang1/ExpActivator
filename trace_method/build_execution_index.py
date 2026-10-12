@@ -10,22 +10,33 @@ compiler performs three deterministic operations:
 3. rank same-user records and aggregate their training-side action labels with
    a fixed reciprocal-rank vote.
 
-Target answers, original target instructions, app names, and intent classes
-are never read while constructing predictions.
+The memory is the official chronological first-80%-per-user split of
+``samples/total.csv``, byte-identical to the history the four paper baselines
+read.  Target answers, original target instructions, app names, and intent
+classes are never read while constructing predictions, and the memory is
+audited to contain none of the 775 execution-test episodes.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
-import pandas as pd
 import torch
 from tqdm import tqdm
 from transformers import AutoModel, AutoTokenizer
 
 REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO))
+
+from trace_method.execution_core import (
+    audit_memory_split,
+    execution_memory_frame,
+    history_key,
+    load_app_labels,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -37,7 +48,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--top-k", type=int, default=10)
     parser.add_argument("--max-neighbors", type=int, default=32)
     parser.add_argument(
-        "--train-labels", default="trace_method/results/execution_app_labels.json"
+        "--history-labels", default="trace_method/results/execution_app_labels.json"
     )
     parser.add_argument(
         "--cache", default="trace_method/results/execution_history_index_gpu0.pt"
@@ -175,17 +186,14 @@ def ranked_vote(
 def main() -> None:
     args = parse_args()
     repo = Path(args.repo).resolve()
-    train = pd.read_csv(repo / "samples/train_set.csv").reset_index(drop=True)
+    train = execution_memory_frame(repo)
+    # Hard, data-derived proof that no execution-test episode is inside the
+    # memory.  This raises rather than recording a self-declared constant.
+    history_audit = audit_memory_split(train, repo)
     episodes = json.loads(
         (repo / "data/personal_execution/personal_samples.json").read_text()
     )
-    label_file = json.loads((repo / args.train_labels).read_text())
-    label_rows = label_file["rows"]
-    if len(label_rows) != len(train) or any(
-        row["row_index"] != index for index, row in enumerate(label_rows)
-    ):
-        raise ValueError("Training labels do not match the official training row order")
-    labels = [str(row["app_name"]) for row in label_rows]
+    labels = load_app_labels(repo, args.history_labels, train)
 
     tokenizer = AutoTokenizer.from_pretrained(
         args.embedding_model, local_files_only=True
@@ -209,6 +217,13 @@ def main() -> None:
         int(user): torch.tensor(group.index.to_numpy(), dtype=torch.long)
         for user, group in train.groupby("user_id", sort=True)
     }
+    # Defence in depth.  The split audit above already guarantees an empty
+    # intersection, so this counter stays at zero; unlike the previous
+    # post-hoc check it is incremented where the exclusion actually happens,
+    # so a regression in the split would show up here instead of passing
+    # silently.
+    memory_keys = [history_key(row.user_id, row.time) for row in train.itertuples()]
+    self_neighbors_excluded = 0
     result: dict[str, object] = {
         "protocol": (
             "frozen multilingual encoder; same-user non-parametric ranking; "
@@ -218,6 +233,7 @@ def main() -> None:
         "embedding_model": str(args.embedding_model),
         "device": args.device,
         "parameter_training": False,
+        "history_audit": history_audit,
         "top_k": args.top_k,
         "max_neighbors": args.max_neighbors,
         "episode_ids": [],
@@ -233,7 +249,16 @@ def main() -> None:
 
     for query_index, episode in enumerate(tqdm(episodes, desc="same-user ranking")):
         user = int(episode["user_id"])
+        episode_id = history_key(episode["user_id"], episode["time"])
         indices = user_indices[user]
+        keep_mask = torch.tensor(
+            [memory_keys[int(index)] != episode_id for index in indices.tolist()],
+            dtype=torch.bool,
+        )
+        self_neighbors_excluded += int((~keep_mask).sum())
+        indices = indices[keep_mask]
+        if len(indices) == 0:
+            raise ValueError(f"User {user} has no eligible memory for {episode_id}")
         per_view = []
         for keys in (residual_keys, full_keys):
             similarities = queries[query_index] @ keys[indices].T
@@ -245,7 +270,6 @@ def main() -> None:
             per_view.append((prediction, neighbors, values, scores))
 
         factorized, full = per_view
-        episode_id = f"{episode['user_id']}_{episode['time']}"
         result["episode_ids"].append(episode_id)
         result["factorized_app_names"].append(factorized[0])
         result["full_goal_app_names"].append(full[0])
@@ -256,6 +280,7 @@ def main() -> None:
         result["factorized_vote_scores"].append(factorized[3])
         result["full_goal_vote_scores"].append(full[3])
 
+    result["history_audit"]["self_neighbors_excluded"] = self_neighbors_excluded
     destination = repo / args.output
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(json.dumps(result, ensure_ascii=False, indent=2))
