@@ -18,8 +18,7 @@ ExpActivator combines:
 
 It fits no model or prediction parameter. The execution protocol covers 775
 episodes and 7,915 actions; proactive evaluation covers 215 positive and 100
-negative states. Grounded execution outputs are written under
-`results/grounded/`.
+negative states.
 
 ## Layout
 
@@ -45,11 +44,7 @@ expactivator/
 ├── shared_memory.py               shared record schema and task adapters
 ├── build_shared_memory.py         byte-exact task-view migration
 ├── verify_shared_memory.py        end-to-end architectural equivalence audit
-└── results/                       report plus ignored generated artifacts
 ```
-
-Generated JSON, CSV, index, and feature-cache files under `results/` are kept
-out of Git.  `results/REPORT.md` is retained as lightweight documentation.
 
 ## Environment
 
