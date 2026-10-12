@@ -1,5 +1,4 @@
-# ExpActivator
-**Relevance Does Not Imply Applicability: Experience Activation for Personal GUI Agents**
+# Relevance Does Not Imply Applicability: Experience Activation for Personal GUI Agents
 
 Fuyao Zhang, Xuan Wang, Zherui Li, Jiaming Zhang, Longtao Huang, Wei Yang Bryan Lim
 
