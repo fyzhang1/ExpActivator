@@ -3,6 +3,7 @@
 
 Fuyao Zhang, Xuan Wang, Zherui Li, Jiaming Zhang, Longtao Huang, Wei Yang Bryan Lim
 
+Nanyang Technological University, Alibaba Group
 [Paper](https://arxiv.org/abs/2609.33304) · [PDF](https://arxiv.org/pdf/2609.33304)
 
 <p align="center">
