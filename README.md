@@ -103,4 +103,4 @@ data/ samples/  benchmark data
 
 ## Acknowledgement
 
-Built on the [PersonalAlign](https://github.com/iLearn-Lab/ACL26-PersonalAlign) benchmark and its HIM-Agent baseline.
+Thanks for [PersonalAlign](https://github.com/iLearn-Lab/ACL26-PersonalAlign) benchmark
