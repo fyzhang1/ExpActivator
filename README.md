@@ -6,6 +6,8 @@ Nanyang Technological University, Alibaba Group
 
 [Paper](https://arxiv.org/abs/2609.33304) · [PDF](https://arxiv.org/pdf/2609.33304)
 
+[huggingface](https://huggingface.co/papers/2609.33304)
+
 <p align="center">
   <img src="assets/framework.png" width="100%" alt="Overview of ExpActivator">
 </p>
