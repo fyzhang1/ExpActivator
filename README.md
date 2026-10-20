@@ -12,6 +12,14 @@ Nanyang Technological University, Alibaba Group
   <img src="assets/framework.png" width="100%" alt="Overview of ExpActivator">
 </p>
 
+## Demo
+
+[![ExpActivator demo: personalized execution and proactive suggestions](assets/expactivator_demo_poster.jpg)](https://fyzhang1.github.io/#publications)
+
+[Watch on the homepage](https://fyzhang1.github.io/#publications) · [Download the 12-second MP4](assets/expactivator_demo.mp4)
+
+Two illustrative workflows show screen-specific preference activation and a timely weather suggestion followed by user acceptance. App interfaces and actions are simulated. See [Demo production notes](assets/DEMO_MEDIA_CREDITS.md).
+
 ## Overview
 
 Personal GUI agents usually append retrieved user history to the policy context and assume it stays useful at every step of a task. ExpActivator treats history as something to **activate**, not just retrieve:
